@@ -6,6 +6,7 @@ import sys
 import timeit
 import os
 import matplotlib.pyplot as plt
+import numpy as np
 import pandasql
 
 
@@ -22,7 +23,7 @@ class processor:
     This enables automated benchmarking of those functions.
     """
 
-    BENCHMARK_REPEATS = 10
+    BENCHMARK_REPEATS = 30
     REQUIRED_COLUMNS = [
         "DATE",
         "OPEN",
@@ -48,7 +49,6 @@ class processor:
                 to_date=date.today(),
             )
             df = df[self.REQUIRED_COLUMNS]
-            df = df.rename(lambda x: x.replace(" ", "_"), axis=1)
             self.data: pandas.DataFrame = df
             return df
         except Exception as e:
@@ -75,9 +75,12 @@ class processor:
     def write_to_csv(self) -> None:
         self.data.to_csv(f"{self.SYMBOL}.csv", index=False)
 
-    def write_to_txt(self) -> None:
-        with open(f"{self.SYMBOL}.txt", "w") as f:
+    def write_to_txt_asStr(self) -> None:
+        with open(f"{self.SYMBOL}_asStr.txt", "w") as f:
             f.write(self.data.to_string(index=False))
+
+    def write_to_txt_asCsv(self) -> None:
+        self.data.to_csv(f"{self.SYMBOL}_asCsv.txt", index=False, sep="\t")
 
     def write_to_json_records(self) -> None:
         self.data.to_json(f"{self.SYMBOL}_records.json", orient="records")
@@ -107,7 +110,9 @@ class processor:
         self.data.to_latex(f"{self.SYMBOL}.tex", index=False)
 
     def write_to_xml(self) -> None:
-        self.data.to_xml(f"{self.SYMBOL}.xml", index=False)
+        self.data.rename(lambda x: x.replace(" ", "_"), axis=1).to_xml(
+            f"{self.SYMBOL}.xml", index=False
+        )
 
     def write_to_feather(self) -> None:
         self.data.to_feather(f"{self.SYMBOL}.feather")
@@ -119,7 +124,9 @@ class processor:
         self.data.to_orc(f"{self.SYMBOL}.orc")
 
     def write_to_dta(self) -> None:
-        self.data.to_stata(f"{self.SYMBOL}.dta", write_index=False)
+        self.data.rename(lambda x: x.replace(" ", "_"), axis=1).to_stata(
+            f"{self.SYMBOL}.dta", write_index=False
+        )
 
     def write_to_hdf(self) -> None:
         self.data.to_hdf(f"{self.SYMBOL}.hdf", key="data", mode="w")
@@ -129,7 +136,7 @@ class processor:
 
 
 def display_graph(benchmark_results: list[(str, float, float)]) -> None:
-    """pretty print the benchmark results for now"""
+    """pretty print the benchmark results and show plot"""
     print(f"{'FORMAT':<20}{'TIME (s)':<20}{'SIZE (bytes)':<30}")
     for result in benchmark_results:
         print(f"{result[0]:<20}{result[1]:<20}{result[2]:<30}")
@@ -137,6 +144,7 @@ def display_graph(benchmark_results: list[(str, float, float)]) -> None:
     # show data in matlotlib graph
     fig, ax = plt.subplots()
     ax.set_ylabel("Time (s)")
+    plt.yscale("log")
     ax.set_xlabel("Format")
     ax.set_title("Benchmark results")
     ax.bar(

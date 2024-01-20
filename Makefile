@@ -1,4 +1,4 @@
-python_executable=python
+python_executable=python3
 environment_name=.venv
 py=$(environment_name)/bin/python3
 cleanup_formats=.csv .json .bin .xlsx .html .tex .xml .feather .parquet .orc .dta .hdf .pkl 
@@ -22,4 +22,6 @@ clean:
 	@rm -f nifty_list.csv
 	@rm -rf __pycache__
 	@rm -f $(foreach ff, $(cleanup_formats), *$(ff))
-	@rm -f !pip_requirements.txt *.txt
+	@mv pip_requirements.txt pip_requirements.txt.bak
+	@rm -f *.txt
+	@mv pip_requirements.txt.bak pip_requirements.txt
