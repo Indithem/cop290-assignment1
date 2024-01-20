@@ -1,2 +1,4 @@
-venv
+.venv
 nifty_list.csv
+__pycache__
+*.png

@@ -1,1 +1,10 @@
 jugaad-data
+pyarrow
+pandas
+numpy
+matplotlib
+datetime
+openpyxl
+tables
+Jinja2
+lxml
