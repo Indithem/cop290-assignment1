@@ -12,18 +12,19 @@ all: $(environment_name)/pyvenv.cfg
 nifty_list.csv:
 	wget "https://drive.google.com/uc?export=download&id=15ZAkp5fo7bd7VniWNZQRIhU6LhPLR2kH" -O "nifty_list.csv"
 
+.PHONY: pip_venv
+pip_venv:
+	apt-get install python3-pip
+	python3 -m venv $(environment_name) --without-pip --system-site-packages
+
 $(environment_name)/pyvenv.cfg: pip_requirements.txt
 # 	works for apt in Debian of gradescope servers, dont know about other OS's
-	$(python_executable) -m venv $(environment_name)
-	@if [$$? -ne 0]; then\
-		sudo apt install python3-venv;\
-		$(python_executable) -m venv $(environment_name);\
-	fi 
+	$(python_executable) -m venv $(environment_name) || make pip_venv
 	$(py) -m pip install -r $<
 
 .PHONY: clean
 clean:
-	# @rm -rf $(environment_name)
+	@rm -rf $(environment_name)
 	@rm -f nifty_list.csv
 	@rm -rf __pycache__
 	@rm -f $(foreach ff, $(cleanup_formats), *$(ff))

@@ -7,7 +7,6 @@ import timeit
 import os
 import matplotlib.pyplot as plt
 import numpy as np
-import pandasql
 
 
 class processor:
