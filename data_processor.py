@@ -23,7 +23,7 @@ class processor:
     This enables automated benchmarking of those functions.
     """
 
-    BENCHMARK_REPEATS = 30
+    BENCHMARK_REPEATS = 100
     REQUIRED_COLUMNS = [
         "DATE",
         "OPEN",
@@ -75,30 +75,31 @@ class processor:
     def write_to_csv(self) -> None:
         self.data.to_csv(f"{self.SYMBOL}.csv", index=False)
 
-    def write_to_txt_asStr(self) -> None:
-        with open(f"{self.SYMBOL}_asStr.txt", "w") as f:
-            f.write(self.data.to_string(index=False))
+    # def write_to_txt_asStr(self) -> None:
+    #     with open(f"{self.SYMBOL}_asStr.txt", "w") as f:
+    #         f.write(self.data.to_string(index=False))
 
-    def write_to_txt_asCsv(self) -> None:
-        self.data.to_csv(f"{self.SYMBOL}_asCsv.txt", index=False, sep="\t")
+    def write_to_txt(self) -> None:
+        self.data.to_csv(f"{self.SYMBOL}.txt", index=False, sep="\t")
 
-    def write_to_json_records(self) -> None:
-        self.data.to_json(f"{self.SYMBOL}_records.json", orient="records")
+    # def write_to_json_records(self) -> None:
+    #     self.data.to_json(f"{self.SYMBOL}_records.json", orient="records")
 
-    def write_to_json_columns(self) -> None:
-        self.data.to_json(f"{self.SYMBOL}_columns.json", orient="columns")
+    # def write_to_json_columns(self) -> None:
+    #     self.data.to_json(f"{self.SYMBOL}_columns.json", orient="columns")
 
-    def write_to_json_split(self) -> None:
-        self.data.to_json(f"{self.SYMBOL}_split.json", orient="split")
+    # def write_to_json_split(self) -> None:
+    #     self.data.to_json(f"{self.SYMBOL}_split.json", orient="split")
 
-    def write_to_json_index(self) -> None:
-        self.data.to_json(f"{self.SYMBOL}_index.json", orient="index")
+    # def write_to_json_index(self) -> None:
+    #     self.data.to_json(f"{self.SYMBOL}_index.json", orient="index")
 
-    def write_to_json_values(self) -> None:
-        self.data.to_json(f"{self.SYMBOL}_values.json", orient="values")
+    def write_to_json(self) -> None:
+        # json_split is found to be the best
+        self.data.to_json(f"{self.SYMBOL}.json", orient="values")
 
-    def write_to_json_table(self) -> None:
-        self.data.to_json(f"{self.SYMBOL}_table.json", orient="table")
+    # def write_to_json_table(self) -> None:
+    #     self.data.to_json(f"{self.SYMBOL}_table.json", orient="table")
 
     def write_to_xlsx(self) -> None:
         self.data.to_excel(f"{self.SYMBOL}.xlsx", index=False)
@@ -136,20 +137,32 @@ class processor:
 
 
 def display_graph(benchmark_results: list[(str, float, float)]) -> None:
-    """pretty print the benchmark results and show plot"""
+    """pretty print the benchmark results and show plot
+    The benchmark results should be a list of tuples of the form (format, time, size)"""
     print(f"{'FORMAT':<20}{'TIME (s)':<20}{'SIZE (bytes)':<30}")
     for result in benchmark_results:
         print(f"{result[0]:<20}{result[1]:<20}{result[2]:<30}")
 
-    # show data in matlotlib graph
-    fig, ax = plt.subplots()
-    ax.set_ylabel("Time (s)")
-    plt.yscale("log")
-    ax.set_xlabel("Format")
-    ax.set_title("Benchmark results")
-    ax.bar(
+    # shows data in two seperate graph windows
+    # one for time and one for size
+    fig, ax1 = plt.subplots()
+    fig.suptitle("Benchmark Results")
+    ax1.set_title("Time")
+    ax1.set_ylabel("Time (s)")
+    ax1.set_xlabel("Format")
+    ax1.bar(
         [result[0] for result in benchmark_results],
         [result[1] for result in benchmark_results],
+    )
+    # y axis of time plot is in log scale
+    ax1.set_yscale("log")
+    fig, ax2 = plt.subplots()
+    ax2.set_title("Size")
+    ax2.set_ylabel("Size (bytes)")
+    ax2.set_xlabel("Format")
+    ax2.bar(
+        [result[0] for result in benchmark_results],
+        [result[2] for result in benchmark_results],
     )
     plt.show()
 
