@@ -5,6 +5,8 @@ numpy
 matplotlib
 datetime
 python-dateutil
+pyyaml
+bson
 openpyxl
 tables
 Jinja2

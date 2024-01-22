@@ -8,7 +8,8 @@ import timeit
 import os
 import matplotlib.pyplot as plt
 import numpy as np
-
+import yaml
+import bson
 
 class processor:
     """
@@ -57,7 +58,8 @@ class processor:
 
     def benchmark(self) -> list[(str, float, float)]:
         benchmark_results = list[(str, float, float)]()
-        for f in dir(self):
+        for i,f in enumerate(dir(self)):
+            print(f"Progress : {i}/{len(dir(self))}% benchmarking {f}")
             if "write_to" in f and callable(getattr(self, f)):
                 splitted = f.removeprefix("write_to_").split("_")
                 fileformat = splitted[0]
@@ -135,6 +137,12 @@ class processor:
     def write_to_pkl(self) -> None:
         self.data.to_pickle(f"{self.SYMBOL}.pkl")
 
+    def write_to_yaml(self) -> None:
+        yaml.dump(self.data.to_dict(), open(f"{self.SYMBOL}.yaml", "w"))
+
+    def write_to_bson(self) -> None:
+        with open(f"{self.SYMBOL}.bson", "wb") as f:
+            f.write(bson.dumps(self.data.to_dict()))
 
 def make_graph(benchmark_results: list[(str, float, float)]) -> plt.Figure:
     """pretty print the benchmark results and show plot

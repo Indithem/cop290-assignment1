@@ -21,7 +21,7 @@ A graph is stored in the file _SYMBOL.png_. Benchmark results are outputted to c
 
 
 ## Further plans
-* Add more formats to benchmark.
+* Benchmark files should be stored in a seperate directory.
 * As per the assignment, UI for the following features
     * Plot graph in defined time scale.
     * Plot multiple stocks in same time scale.
