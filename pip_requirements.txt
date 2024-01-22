@@ -4,6 +4,7 @@ pandas
 numpy
 matplotlib
 datetime
+python-dateutil
 openpyxl
 tables
 Jinja2

@@ -1,6 +1,7 @@
 import pandas
 import datetime
 from datetime import date
+from dateutil.relativedelta import relativedelta
 from jugaad_data.nse import stock_df
 import sys
 import timeit
@@ -44,7 +45,7 @@ class processor:
         try:
             df: pandas.DataFrame = stock_df(
                 symbol=self.SYMBOL,
-                from_date=date.today() - datetime.timedelta(days=365 * self.YEARS),
+                from_date=date.today() - relativedelta(years=self.YEARS),
                 to_date=date.today(),
             )
             df = df[self.REQUIRED_COLUMNS]
