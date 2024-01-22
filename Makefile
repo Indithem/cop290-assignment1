@@ -1,7 +1,7 @@
 python_executable=python3
 environment_name=.venv
 py=$(environment_name)/bin/python3
-cleanup_formats=.csv .json .bin .xlsx .html .tex .xml .feather .parquet .orc .dta .hdf .pkl 
+cleanup_formats=.csv .json .bin .xlsx .html .tex .xml .feather .parquet .orc .dta .hdf .pkl .png
 SYMBOL?=BPCL
 num_years?=5
 
@@ -14,7 +14,6 @@ nifty_list.csv:
 
 .PHONY: pip_venv
 pip_venv:
-	apt-get install python3-pip
 	python3 -m venv $(environment_name) --without-pip --system-site-packages
 
 $(environment_name)/pyvenv.cfg: pip_requirements.txt
