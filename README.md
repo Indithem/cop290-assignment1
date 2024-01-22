@@ -2,7 +2,7 @@
 
 ## What this does?
 Downloads historical data of a _stock symbol_ for _past x years_ using [jugaad-data](https://github.com/jugaad-py/jugaad-data) API and benchmarks the time and space taken to store the data in various formats.
-A graph is displayed. Benchmark results are outputted to console.
+A graph is stored in the file _SYMBOL.png_. Benchmark results are outputted to console.
 
 ## How to use?
 ### To use
@@ -15,6 +15,10 @@ A graph is displayed. Benchmark results are outputted to console.
 ## Known issues
 * pip virtual environment might not get properly installed. 
     Only a temporary workaround is provided for debian based systems.(On which the gradescope servers run)
+
+## Example
+![BPCL](imgs/BPCL.png)
+
 
 ## Further plans
 * Add more formats to benchmark.

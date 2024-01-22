@@ -159,7 +159,7 @@ def make_graph(benchmark_results: list[(str, float, float)]) -> plt.Figure:
     ax2 = ax1.twinx()
     ax2.set_ylabel("SIZE (bytes)")
     ax2.bar(
-        SEPERATION+np.arange(len(benchmark_results)),
+        SEPERATION + np.arange(len(benchmark_results)),
         [result[2] for result in benchmark_results],
         color="red",
         width=SEPERATION,
@@ -180,8 +180,9 @@ def main():
     if len(sys.argv) > 3:
         processor.BENCHMARK_REPEATS = int(sys.argv[3])
     p = processor(sys.argv[1], int(sys.argv[2]))
-    graph =make_graph(p.benchmark())
+    graph = make_graph(p.benchmark())
     graph.savefig(f"{p.SYMBOL}.png", dpi=400)
+
 
 if __name__ == "__main__":
     main()
