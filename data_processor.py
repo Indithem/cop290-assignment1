@@ -24,7 +24,7 @@ class processor:
     This enables automated benchmarking of those functions.
     """
 
-    BENCHMARK_REPEATS = 100
+    BENCHMARK_REPEATS = 1
     REQUIRED_COLUMNS = [
         "DATE",
         "OPEN",
@@ -58,6 +58,8 @@ class processor:
 
     def benchmark(self) -> list[(str, float, float)]:
         benchmark_results = list[(str, float, float)]()
+        if not os.path.exists("benchmarks"):
+            os.makedirs("benchmarks")
         for i,f in enumerate(dir(self)):
             print(f"Progress : {i}/{len(dir(self))}% benchmarking {f}")
             if "write_to" in f and callable(getattr(self, f)):
@@ -70,78 +72,78 @@ class processor:
                     )
                     / self.BENCHMARK_REPEATS
                 )
-                size = os.stat(f"{self.SYMBOL}{test_name}.{fileformat}").st_size
+                size = os.stat(f"benchmarks/{self.SYMBOL}{test_name}.{fileformat}").st_size
                 benchmark_results.append((f"{fileformat}{test_name}", time, size))
         return benchmark_results
 
     def write_to_csv(self) -> None:
-        self.data.to_csv(f"{self.SYMBOL}.csv", index=False)
+        self.data.to_csv(f"benchmarks/{self.SYMBOL}.csv", index=False)
 
     # def write_to_txt_asStr(self) -> None:
-    #     with open(f"{self.SYMBOL}_asStr.txt", "w") as f:
+    #     with open(f"benchmarks/{self.SYMBOL}_asStr.txt", "w") as f:
     #         f.write(self.data.to_string(index=False))
 
     def write_to_txt(self) -> None:
-        self.data.to_csv(f"{self.SYMBOL}.txt", index=False, sep="\t")
+        self.data.to_csv(f"benchmarks/{self.SYMBOL}.txt", index=False, sep="\t")
 
     # def write_to_json_records(self) -> None:
-    #     self.data.to_json(f"{self.SYMBOL}_records.json", orient="records")
+    #     self.data.to_json(f"benchmarks/{self.SYMBOL}_records.json", orient="records")
 
     # def write_to_json_columns(self) -> None:
-    #     self.data.to_json(f"{self.SYMBOL}_columns.json", orient="columns")
+    #     self.data.to_json(f"benchmarks/{self.SYMBOL}_columns.json", orient="columns")
 
     # def write_to_json_split(self) -> None:
-    #     self.data.to_json(f"{self.SYMBOL}_split.json", orient="split")
+    #     self.data.to_json(f"benchmarks/{self.SYMBOL}_split.json", orient="split")
 
     # def write_to_json_index(self) -> None:
-    #     self.data.to_json(f"{self.SYMBOL}_index.json", orient="index")
+    #     self.data.to_json(f"benchmarks/{self.SYMBOL}_index.json", orient="index")
 
     def write_to_json(self) -> None:
         # json_split is found to be the best
-        self.data.to_json(f"{self.SYMBOL}.json", orient="values")
+        self.data.to_json(f"benchmarks/{self.SYMBOL}.json", orient="values")
 
     # def write_to_json_table(self) -> None:
-    #     self.data.to_json(f"{self.SYMBOL}_table.json", orient="table")
+    #     self.data.to_json(f"benchmarks/{self.SYMBOL}_table.json", orient="table")
 
     def write_to_xlsx(self) -> None:
-        self.data.to_excel(f"{self.SYMBOL}.xlsx", index=False)
+        self.data.to_excel(f"benchmarks/{self.SYMBOL}.xlsx", index=False)
 
     def write_to_html(self) -> None:
-        self.data.to_html(f"{self.SYMBOL}.html", index=False)
+        self.data.to_html(f"benchmarks/{self.SYMBOL}.html", index=False)
 
     def write_to_tex(self) -> None:
-        self.data.to_latex(f"{self.SYMBOL}.tex", index=False)
+        self.data.to_latex(f"benchmarks/{self.SYMBOL}.tex", index=False)
 
     def write_to_xml(self) -> None:
         self.data.rename(lambda x: x.replace(" ", "_"), axis=1).to_xml(
-            f"{self.SYMBOL}.xml", index=False
+            f"benchmarks/{self.SYMBOL}.xml", index=False
         )
 
     def write_to_feather(self) -> None:
-        self.data.to_feather(f"{self.SYMBOL}.feather")
+        self.data.to_feather(f"benchmarks/{self.SYMBOL}.feather")
 
     def write_to_parquet(self) -> None:
-        self.data.to_parquet(f"{self.SYMBOL}.parquet")
+        self.data.to_parquet(f"benchmarks/{self.SYMBOL}.parquet")
 
     def write_to_orc(self) -> None:
-        self.data.to_orc(f"{self.SYMBOL}.orc")
+        self.data.to_orc(f"benchmarks/{self.SYMBOL}.orc")
 
     def write_to_dta(self) -> None:
         self.data.rename(lambda x: x.replace(" ", "_"), axis=1).to_stata(
-            f"{self.SYMBOL}.dta", write_index=False
+            f"benchmarks/{self.SYMBOL}.dta", write_index=False
         )
 
     def write_to_hdf(self) -> None:
-        self.data.to_hdf(f"{self.SYMBOL}.hdf", key="data", mode="w")
+        self.data.to_hdf(f"benchmarks/{self.SYMBOL}.hdf", key="data", mode="w")
 
     def write_to_pkl(self) -> None:
-        self.data.to_pickle(f"{self.SYMBOL}.pkl")
+        self.data.to_pickle(f"benchmarks/{self.SYMBOL}.pkl")
 
     def write_to_yaml(self) -> None:
-        yaml.dump(self.data.to_dict(), open(f"{self.SYMBOL}.yaml", "w"))
+        yaml.dump(self.data.to_dict(), open(f"benchmarks/{self.SYMBOL}.yaml", "w"))
 
     def write_to_bson(self) -> None:
-        with open(f"{self.SYMBOL}.bson", "wb") as f:
+        with open(f"benchmarks/{self.SYMBOL}.bson", "wb") as f:
             f.write(bson.dumps(self.data.to_dict()))
 
 def make_graph(benchmark_results: list[(str, float, float)]) -> plt.Figure:

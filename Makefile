@@ -1,7 +1,6 @@
 python_executable=python3
 environment_name=.venv
 py=$(environment_name)/bin/python3
-cleanup_formats=.csv .json .bin .xlsx .html .tex .xml .feather .parquet .orc .dta .hdf .pkl .png .bson .yaml
 SYMBOL?=BPCL
 num_years?=5
 
@@ -19,12 +18,11 @@ pip_venv:
 $(environment_name)/pyvenv.cfg: pip_requirements.txt
 # 	works for apt in Debian of gradescope servers, dont know about other OS's
 	$(python_executable) -m venv $(environment_name) || make pip_venv
-	$(py) -m pip install -r $<
+	$(py) -m pip install -r $< --quiet
 
 .PHONY: clean
 clean:
 	@rm -rf $(environment_name)
 	@rm -f nifty_list.csv
 	@rm -rf __pycache__
-	@rm -f $(foreach ff, $(cleanup_formats), *$(ff))
-	@find . -name '*.txt' ! -name 'pip_requirements.txt' -exec rm {} +
+	@rm -rf benchmarks
