@@ -7,7 +7,8 @@ SYMBOL?=BPCL
 num_years?=5
 
 .PHONY: all
-all: $(environment_name)/pyvenv.cfg $(environment_name2)/pyvenv.cfg
+all: $(environment_name2)/pyvenv.cfg
+	@rm -r instance
 	$(py2) -m flask run 
 
 nifty_list.csv:
