@@ -8,7 +8,7 @@ num_years?=5
 
 .PHONY: all
 all: $(environment_name2)/pyvenv.cfg
-	@rm -r instance
+	@rm -rf instance
 	$(py2) -m flask run 
 
 nifty_list.csv:
