@@ -3,11 +3,12 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField
+from wtforms import StringField, PasswordField,validators
 from wtforms.validators import Length
 
 app = Flask(__name__)
 app.secret_key = "your_secret_key"  # Replace with your actual secret key
+app.config["WTF_CSRF_ENABLED"] = False
 
 # Database Configuration
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
@@ -23,11 +24,14 @@ class User(db.Model):
 
 
 # Password Validator
-class Password_validator(FlaskForm):
-    password = PasswordField("password", validators=[
-        Length(min=8, message="Password must be atleast 8 characters long.")
+class PasswordValidator(FlaskForm):
+    password = StringField("password", validators=[
+        validators.Length(min=8, message="Password must be at least 8 characters long."),
+        validators.Regexp(
+            regex=r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$',
+            message="Password must contain at least one number, one special character, one uppercase and lowercase letter."
+        )
     ])
-
 
 # Initialize Database within Application Context
 with app.app_context():
@@ -42,16 +46,19 @@ def index():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        password_validator = Password_validator()
         username = request.form["username"]
-        password = request.form["password"]
-        password_validator.password.data = password
+        password_validator = PasswordValidator(request.form)
         if not password_validator.validate():
-            flash("Password must be atleast 8 characters lobjnkmng.")
+            for error in password_validator.errors.values():
+                flash(error[0])
             return redirect(url_for("register"))
-
+      
+        password = request.form["password"]
         hashed_password = generate_password_hash(password, method="pbkdf2:sha256")
-
+        user = User.query.filter_by(username=username).first()
+        if user :
+            flash("Username already exists") 
+            return redirect(url_for("register"))
         new_user = User(username=username, password_hash=hashed_password)
         db.session.add(new_user)
         db.session.commit()

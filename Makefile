@@ -8,8 +8,8 @@ num_years?=5
 
 .PHONY: all
 all: $(environment_name2)/pyvenv.cfg
-	@rm -rf instance
-	$(py2) -m flask run 
+	# @rm -rf instance
+	$(py2) -m flask --debug run 
 
 nifty_list.csv:
 	wget "https://drive.google.com/uc?export=download&id=15ZAkp5fo7bd7VniWNZQRIhU6LhPLR2kH" -O "nifty_list.csv"
