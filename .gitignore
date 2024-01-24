@@ -1,5 +1,6 @@
 benchmarks
 nifty_list.csv
-.venv
+.venv*
 __pycache__
 /*.png
+instance
