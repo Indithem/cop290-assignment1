@@ -11,8 +11,8 @@ all: $(environment_name2)/pyvenv.cfg
 	# @rm -rf instance
 	$(py2) -m flask --debug run 
 
-nifty_list.csv:
-	wget "https://drive.google.com/uc?export=download&id=15ZAkp5fo7bd7VniWNZQRIhU6LhPLR2kH" -O "nifty_list.csv"
+stock_data/nifty_list.csv:
+	@wget "https://drive.google.com/uc?export=download&id=15ZAkp5fo7bd7VniWNZQRIhU6LhPLR2kH" -O "stocks/data/nifty_list.csv"
 
 $(environment_name)/pyvenv.cfg: pip_requirements.txt
 # 	works for apt in Debian of gradescope servers, dont know about other OS's
@@ -30,3 +30,4 @@ clean:
 	@rm -f nifty_list.csv
 	@rm -rf __pycache__
 	@rm -rf benchmarks
+	@rm -rf stock_data

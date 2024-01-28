@@ -1,6 +1,8 @@
-benchmarks
+benchmarks/
 nifty_list.csv
 .venv*
 __pycache__
 /*.png
 instance
+
+stock_data/
