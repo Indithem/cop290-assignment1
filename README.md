@@ -29,5 +29,7 @@
     * Validity of username in registration page before submit button is clicked
 * Filters
     * p/e ratio
-    * average
-    * sort high to low/low to high/ alphabetical   
+    * average (VWAP=average)
+    * sort high to low/low to high/ alphabetical  
+* Stocks being updated live before graph is plotted as in tradingview.com 
+* Progressive Web App
