@@ -7,6 +7,7 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
+    background: linear-gradient(skyblue, lightgreen);
 }
 
 .login-container {
@@ -29,9 +30,18 @@ body {
 input[type="text"], input[type="password"] {
     width: 100%;
     padding: 10px;
+    border: 1px solid black;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+input[type="submit"]{
+    width: 90%;
+    padding: 90px;
     border: 1px solid #ddd;
     border-radius: 5px;
     box-sizing: border-box;
+    font-size: 20px;
+    
 }
 
 button {
@@ -39,36 +49,175 @@ button {
     padding: 10px;
     border: none;
     background-color: #007bff;
+    font-size: medium;
 
 }
     /* Add this to your existing style.css */
 
 .welcome-container {
     text-align: center;
-    background-color: white;
+    background:linear-gradient(grey,rgb(177, 205, 20));
     padding: 40px;
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     width: 300px;
     margin: auto;
 }
+.fa-user{
+    color: black;
+    margin-left: -20px;
+    margin-top: -5px;
+}
+.fa-lock{
+    color: black;
+    margin-left: -20px;
+    margin-top: -5px;
+}
+.home-body {
+    background-image: url(/static/temp.png);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    background-size: cover;
+    font-family: 'Arial', sans-serif; /* Optional: Set font-family */
+    display: flex; /* Optional: Flexbox display properties */
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin-left: -580px;
+    margin-top: -150px;
+
+
+    
+}
+.home-content {
+    text-align: center; /* Optional: Center align content */
+    padding: 20px; /* Optional: Add padding */
+    box-shadow: 25px,50px,50px,rgb(225, 192, 255);
+    color:rgb(226, 43, 159);
+    margin-left: 170px;
+    font-size: 20px;
+    font-style: bold;
+    text-decoration:solid;
+}
 
 .welcome-container h1 {
     margin-bottom: 20px;
 }
 
+.logout-button2{
+    display: inline-block;
+    padding: 2px 18px;
+    background-color: black;
+    color: greenyellow;
+    
+    border-radius: 5px;
+    text-decoration: none;
+    margin-top: 150px;
+    margin-right: 600px;
+}
+
+.logout-button2:hover {
+    background-color: blueviolet;
+}
+
+.checkbox-label {
+    display: block;
+    margin-bottom: 3px;
+  }
+
+
 .logout-button {
     display: inline-block;
     padding: 10px 20px;
     background-color: #dc3545;
-    color: white;
+    color: whitesmoke;
+    font-size: large;
     border-radius: 5px;
     text-decoration: none;
+    /* Adjust button position */
+    margin-top: 20px; /* Move the button down */
+    margin-right: 20px; /* Move the button right */
 }
 
 .logout-button:hover {
     background-color: #c82333;
 }
+/* 
 
+body{
+    background:linear-gradient(to left,skyblue,lightgreen);
+    background-repeat:no-repeat;
+    background-attachment: fixed;
+    background-image: url(image.jpeg);
+    background-size: cover;
 
+}
+h1{
+    color: white;
+}
+#p1{
+    color:aqua;
+    font-family: "Press Start 2P",sans-serif;
+    font-style: italic;
+    font-weight: bolder;
+    text-decoration: cyan dotted underline;
+    font-size: 18px;
+}
+#p2{
+    border-style: solid;
+    border-top-style: dotted;
+    border-right-color: silver;
+    border-left-width: 10px;
+    border-radius: 10px;
+    padding: 5px;
+}
+.odd{
+    color: red;
+}
+.even{
+    color: blue;
+}
+#box1{
+    margin-left: 200px;
+    border: 5px solid;
+    width: 250px;
+    height: 250px;
+    font-size: 22px;
+    background: pink;
+    margin: 600px;
+    text-align: center;
+    /* animation:mySlide;
+    animation-play-state: running;
+    animation-delay: 0s;
+    animation-timing-function: ease;
+    animation-iteration-count: infinite;
+    animation-duration: 5s; */
+    /* animation:3s linear 0s infinite running myOpacity; */
+/* } */
+/* #box1:hover{
+    
+} */
+
+/* @keyframes mySlide{
+    from{margin-left:100%}
+    to{margin-left:0%}
+}
+@keyframes myRotate{
+    100%{trandform:rotateY(360deg)}
+}
+@keyframes myOpacity{
+    50%{opacity: 0;}
+}
+@keyframes myScale{
+    50%{transform: scale(0.5,0.5);}
+    20%{background-color: orange;}
+    40%{background-color: green;}
+}
+@keyframes myColorChange{
+    
+}
+#img{
+    float: left;
+} */
 

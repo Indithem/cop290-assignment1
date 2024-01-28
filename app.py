@@ -40,7 +40,7 @@ with app.app_context():
 
 @app.route("/")
 def index():
-    return render_template("login.html")
+    return render_template("home.html")
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -64,13 +64,15 @@ def register():
         db.session.commit()
 
         flash("Registration successful! Please login.")
-        return redirect(url_for("index"))
+        return redirect(url_for("login"))
 
     return render_template("register.html")
 
 
-@app.route("/login", methods=["POST"])
+@app.route("/login", methods=["POST","GET"])
 def login():
+    if request.method=="GET":
+        return render_template("login.html")
     username = request.form["username"]
     password = request.form["password"]
     user = User.query.filter_by(username=username).first()
@@ -81,7 +83,7 @@ def login():
         return redirect(url_for("dashboard"))
     else:
         flash("Invalid username or password")
-        return redirect(url_for("index"))
+        return redirect(url_for("login"))
 
 
 @app.route("/dashboard")
@@ -97,6 +99,10 @@ def logout():
     session.pop("user_id", None)
     session.pop("username", None)
     return redirect(url_for("index"))
+
+@app.route("/stocks")
+def stocks():
+    return render_template("stocks.html")
 
 
 if __name__ == "__main__":
