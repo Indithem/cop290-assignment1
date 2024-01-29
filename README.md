@@ -25,3 +25,4 @@ A graph is stored in the file _SYMBOL.png_. Benchmark results are outputted to c
     * Plot graph in defined time scale.
     * Plot multiple stocks in same time scale.
     * Apply technical filters.
+* Add navigation among pages.

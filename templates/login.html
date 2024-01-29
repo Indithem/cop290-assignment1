@@ -18,9 +18,6 @@
                 <input type="password" name="password" id="pass" placeholder="Password" required>
                 <input type="checkbox" id="showPassword"> Show Password
             </div>
-            <div class="form-group">
-                <button type="submit">Login</button>
-            </div>
             {% with messages= get_flashed_messages() %}
             {% if messages %}
             <ul class=flashes>
@@ -30,6 +27,9 @@
             </ul>
             {% endif %}
             {% endwith %}
+            <div class="form-group">
+                <button type="submit">Login</button>
+            </div>
         </form>
         <p>Don't have an account? <a href="/register">Register here</a></p>
     </div>

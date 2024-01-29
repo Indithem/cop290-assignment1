@@ -28,8 +28,20 @@ class PasswordValidator(FlaskForm):
     password = StringField("password", validators=[
         validators.Length(min=8, message="Password must be at least 8 characters long."),
         validators.Regexp(
-            regex=r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$',
-            message="Password must contain at least one number, one special character, one uppercase and lowercase letter."
+            regex=r'^(?=.*[a-z])',
+            message="Password must contain at least one lowercase letter."
+        ),
+        validators.Regexp(
+            regex=r'^(?=.*[A-Z])',
+            message="Password must contain at least one uppercase letter."
+        ),
+        validators.Regexp(
+            regex=r'^(?=.*\d)',
+            message="Password must contain at least one number."
+        ),
+        validators.Regexp(
+            regex=r'^(?=.*[@$!%*?&])',
+            message="Password must contain at least one special character."
         )
     ])
 
@@ -71,6 +83,8 @@ def register():
 
 @app.route("/login", methods=["POST","GET"])
 def login():
+    if "user_id" in session:
+        return redirect(url_for("dashboard"))
     if request.method=="GET":
         return render_template("login.html")
     username = request.form["username"]
@@ -102,7 +116,11 @@ def logout():
 
 @app.route("/stocks")
 def stocks():
-    return render_template("stocks.html")
+    if "user_id" in session:
+        return render_template("stocks.html")
+    else:
+        flash("Please login first!")
+        return render_template("login.html")
 
 
 if __name__ == "__main__":
