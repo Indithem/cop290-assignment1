@@ -1,19 +1,14 @@
 import pandas
-import datetime
-from datetime import date
-from dateutil.relativedelta import relativedelta
-from jugaad_data.nse import stock_df, NSELive
+import yfinance as yf
 import sys
 from enum import Enum
 import requests
 import timeit
 import os, shutil
-import matplotlib.pyplot as plt
 import numpy as np
-import yaml
-import bson
+import plotly
 
-DATA_FOLDER = "stock_data"
+DATA_FOLDER = "instance/stocks_data"
 
 
 class Downloader:
@@ -30,35 +25,17 @@ class Downloader:
     """
 
     BENCHMARK_REPEATS = 1
-    REQUIRED_COLUMNS = [
-        "DATE",
-        "OPEN",
-        "CLOSE",
-        "HIGH",
-        "LOW",
-        "LTP",
-        "VOLUME",
-        "VALUE",
-        "NO OF TRADES",
-    ]
 
     def __init__(self, SYMBOL: str) -> None:
         self.SYMBOL = SYMBOL
-        self.download_data()
+        self.data=self.download_data()
 
     def download_data(self) -> pandas.DataFrame:
-        try:
-            df: pandas.DataFrame = stock_df(
-                symbol=self.SYMBOL,
-                from_date=date.today() - relativedelta(years=10),
-                to_date=date.today(),
-            )
-            df = df[self.REQUIRED_COLUMNS]
-            self.data: pandas.DataFrame = df
-            return df
-        except Exception as e:
-            self.data = pandas.DataFrame()
-            print(f"Error during downloading {self.SYMBOL} data\n{e}")
+        df: pandas.DataFrame = yf.download(self.SYMBOL, period="10y").reset_index()
+        return pandas.DataFrame({
+            'Date': df['Date'],
+            'Adj Close': df["Adj Close"],
+        })
 
     def benchmark(self) -> list[(str, float, float)]:
         benchmark_results = list[(str, float, float)]()
@@ -77,79 +54,79 @@ class Downloader:
                     / self.BENCHMARK_REPEATS
                 )
                 size = os.stat(
-                    f"stock_data/{self.SYMBOL}{test_name}.{fileformat}"
+                    f"{DATA_FOLDER}/{self.SYMBOL}{test_name}.{fileformat}"
                 ).st_size
                 benchmark_results.append((f"{fileformat}{test_name}", time, size))
         return benchmark_results
 
     def write_to_csv(self) -> None:
-        self.data.to_csv(f"stock_data/{self.SYMBOL}.csv", index=False)
+        self.data.to_csv(f"{DATA_FOLDER}/{self.SYMBOL}.csv", index=False)
 
     # def write_to_txt_asStr(self) -> None:
-    #     with open(f"stock_data/{self.SYMBOL}_asStr.txt", "w") as f:
+    #     with open(f"{DATA_FOLDER}/{self.SYMBOL}_asStr.txt", "w") as f:
     #         f.write(self.data.to_string(index=False))
 
     def write_to_txt(self) -> None:
-        self.data.to_csv(f"stock_data/{self.SYMBOL}.txt", index=False, sep="\t")
+        self.data.to_csv(f"{DATA_FOLDER}/{self.SYMBOL}.txt", index=False, sep="\t")
 
     # def write_to_json_records(self) -> None:
-    #     self.data.to_json(f"stock_data/{self.SYMBOL}_records.json", orient="records")
+    #     self.data.to_json(f"{DATA_FOLDER}/{self.SYMBOL}_records.json", orient="records")
 
     # def write_to_json_columns(self) -> None:
-    #     self.data.to_json(f"stock_data/{self.SYMBOL}_columns.json", orient="columns")
+    #     self.data.to_json(f"{DATA_FOLDER}/{self.SYMBOL}_columns.json", orient="columns")
 
     # def write_to_json_split(self) -> None:
-    #     self.data.to_json(f"stock_data/{self.SYMBOL}_split.json", orient="split")
+    #     self.data.to_json(f"{DATA_FOLDER}/{self.SYMBOL}_split.json", orient="split")
 
     # def write_to_json_index(self) -> None:
-    #     self.data.to_json(f"stock_data/{self.SYMBOL}_index.json", orient="index")
+    #     self.data.to_json(f"{DATA_FOLDER}/{self.SYMBOL}_index.json", orient="index")
 
     def write_to_json(self) -> None:
         # json_split is found to be the best
-        self.data.to_json(f"stock_data/{self.SYMBOL}.json", orient="values")
+        self.data.to_json(f"{DATA_FOLDER}/{self.SYMBOL}.json", orient="values")
 
     # def write_to_json_table(self) -> None:
-    #     self.data.to_json(f"stock_data/{self.SYMBOL}_table.json", orient="table")
+    #     self.data.to_json(f"{DATA_FOLDER}/{self.SYMBOL}_table.json", orient="table")
 
     def write_to_xlsx(self) -> None:
-        self.data.to_excel(f"stock_data/{self.SYMBOL}.xlsx", index=False)
+        self.data.to_excel(f"{DATA_FOLDER}/{self.SYMBOL}.xlsx", index=False)
 
     def write_to_html(self) -> None:
-        self.data.to_html(f"stock_data/{self.SYMBOL}.html", index=False)
+        self.data.to_html(f"{DATA_FOLDER}/{self.SYMBOL}.html", index=False)
 
     def write_to_tex(self) -> None:
-        self.data.to_latex(f"stock_data/{self.SYMBOL}.tex", index=False)
+        self.data.to_latex(f"{DATA_FOLDER}/{self.SYMBOL}.tex", index=False)
 
     def write_to_xml(self) -> None:
         self.data.rename(lambda x: x.replace(" ", "_"), axis=1).to_xml(
-            f"stock_data/{self.SYMBOL}.xml", index=False
+            f"{DATA_FOLDER}/{self.SYMBOL}.xml", index=False
         )
 
     def write_to_feather(self) -> None:
-        self.data.to_feather(f"stock_data/{self.SYMBOL}.feather")
+        self.data.to_feather(f"{DATA_FOLDER}/{self.SYMBOL}.feather")
 
     def write_to_parquet(self) -> None:
-        self.data.to_parquet(f"stock_data/{self.SYMBOL}.parquet")
+        self.data.to_parquet(f"{DATA_FOLDER}/{self.SYMBOL}.parquet")
 
     def write_to_orc(self) -> None:
-        self.data.to_orc(f"stock_data/{self.SYMBOL}.orc")
+        self.data.to_orc(f"{DATA_FOLDER}/{self.SYMBOL}.orc")
 
     def write_to_dta(self) -> None:
         self.data.rename(lambda x: x.replace(" ", "_"), axis=1).to_stata(
-            f"stock_data/{self.SYMBOL}.dta", write_index=False
+            f"{DATA_FOLDER}/{self.SYMBOL}.dta", write_index=False
         )
 
     def write_to_hdf(self) -> None:
-        self.data.to_hdf(f"stock_data/{self.SYMBOL}.hdf", key="data", mode="w")
+        self.data.to_hdf(f"{DATA_FOLDER}/{self.SYMBOL}.hdf", key="data", mode="w")
 
     def write_to_pkl(self) -> None:
-        self.data.to_pickle(f"stock_data/{self.SYMBOL}.pkl")
+        self.data.to_pickle(f"{DATA_FOLDER}/{self.SYMBOL}.pkl")
 
     def write_to_yaml(self) -> None:
-        yaml.dump(self.data.to_dict(), open(f"stock_data/{self.SYMBOL}.yaml", "w"))
+        yaml.dump(self.data.to_dict(), open(f"{DATA_FOLDER}/{self.SYMBOL}.yaml", "w"))
 
     def write_to_bson(self) -> None:
-        with open(f"stock_data/{self.SYMBOL}.bson", "wb") as f:
+        with open(f"{DATA_FOLDER}/{self.SYMBOL}.bson", "wb") as f:
             f.write(bson.dumps(self.data.to_dict()))
 
 
@@ -163,33 +140,49 @@ class formats(Enum):
 
 class Saver:
     def __init__(self):
-        if not os.path.exists("stock_data"):
-            os.makedirs("stock_data")
+        if not os.path.exists(f"{DATA_FOLDER}"):
+            os.makedirs(f"{DATA_FOLDER}")
             stocks = self.get_csv_data()
             for stock in stocks:
-                if not os.path.exists(f"stock_data/{stock}.orc"):
+                if not os.path.exists(f"{DATA_FOLDER}/{stock}.feather"):
                     p = Downloader(stock)
-                    p.write_to_orc()
+                    p.write_to_feather()
 
-    def save_graph(self, data: list[pandas.DataFrame], symbols):
-        fig, ax = plt.subplots(figsize=(10, 5))
+    def save_graph(self, symbols=None, data: list[pandas.DataFrame]=None):
+        symbols = symbols or self.symbols
+        data = data or self.ret_data
+        import plotly.graph_objects as go
+
+        fig = go.Figure()
         for i, d in enumerate(data):
-            ax.plot(d["DATE"], d["LTP"], label=symbols[i])
-        ax.set_xlabel("DATE")
-        ax.set_ylabel("LTP")
-        ax.legend()
-        fig.tight_layout()
-        fig.savefig(f"stock_data/out.png", dpi=400)
+            fig.add_trace(go.Scatter(x=list(d['Date']), y=d["Adj Close"], mode='lines', name=symbols[i]))
+
+        fig.update_layout(
+            xaxis_title="DATE",
+            yaxis_title="closing price",
+            legend=dict(
+                title="Symbols",
+                orientation="h",
+                yanchor="bottom",
+                y=1.02,
+                xanchor="right",
+                x=1
+            ),
+            margin=dict(l=40, r=40, t=40, b=40)
+        )
+        fig.show()
+        plotly.io.write_html(fig, f"{DATA_FOLDER}/graph.html")
 
     def save_graph_data(self, symbols, format):
-        ret_data = []
+        self.symbols = symbols
+        self.ret_data = []
         for symbol in symbols:
-            if not os.path.exists(f"stock_data/{symbol}.orc"):
+            if not os.path.exists(f"{DATA_FOLDER}/{symbol}.feather"):
                 p = Downloader(symbol)
                 data = p.data
-                p.write_to_orc()
+                p.write_to_feather()
             else:
-                data = pandas.read_orc(f"stock_data/{symbol}.orc")
+                data = pandas.read_feather(f"{DATA_FOLDER}/{symbol}.feather")
             match format:
                 case formats.daily:
                     data = data[:10]
@@ -201,17 +194,17 @@ class Saver:
                     data = data[: 90 * 10]
                 case formats.yearly:
                     data = data[: 365 * 10]
-            ret_data.append(data)
-        return ret_data
+            self.ret_data.append(data)
+        return self.ret_data
 
     def get_csv_data(self):
-        if not os.path.exists(f"stock_data/nifty_list.csv"):
+        if not os.path.exists(f"{DATA_FOLDER}/nifty_list.csv"):
             r = requests.get(
                 "https://drive.google.com/uc?export=download&id=15ZAkp5fo7bd7VniWNZQRIhU6LhPLR2kH",
                 allow_redirects=True,
             )
-            open(f"stock_data/nifty_list.csv", "wb").write(r.content)
-        data = pandas.read_csv(f"stock_data/nifty_list.csv")
+            open(f"{DATA_FOLDER}/nifty_list.csv", "wb").write(r.content)
+        data = pandas.read_csv(f"{DATA_FOLDER}/nifty_list.csv")
         return data["Symbol"]
 
     def save_filter_data(self):
@@ -221,7 +214,7 @@ class Saver:
         for stock_sym in syms:
             data[stock_sym] = nse_live.stock_quote(stock_sym)["priceInfo"]["close"]
         data = pandas.DataFrame(data.items(), columns=["Symbol", "Price"])
-        data.to_csv(f"stock_data/stock_prices.csv", index=False)
+        data.to_csv(f"{DATA_FOLDER}/stock_prices.csv", index=False)
 
 
 def main():
@@ -234,7 +227,7 @@ def main():
             Format = formats[sys.argv[2]]
             symbols = sys.argv[3:]
             data = s.save_graph_data(symbols, Format)
-            s.save_graph(data, symbols)
+            s.save_graph(symbols, data)
         case "filters":
             s.save_filter_data()
         case "download":

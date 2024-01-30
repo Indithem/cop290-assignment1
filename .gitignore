@@ -3,6 +3,6 @@ nifty_list.csv
 .venv*
 __pycache__
 /*.png
-instance
+instance/
 
 stock_data/
