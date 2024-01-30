@@ -9,7 +9,7 @@ SQLAlchemy
 typing_extensions
 Werkzeug
 Flask-WTF
-yfinance
+yfinance[nospam]
 pandas
 pyarrow
 plotly

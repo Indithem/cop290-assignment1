@@ -31,6 +31,7 @@
     * p/e ratio
     * average (VWAP=average)
     * sort high to low/low to high/ alphabetical  
-* Download today's data
+* Download today's data for all available stocks
+* Update today's data for a particular stock if the data downloaded before is outdated
 * Stocks being updated live before graph is plotted as in tradingview.com 
 * Progressive Web App

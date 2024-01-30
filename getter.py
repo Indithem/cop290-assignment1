@@ -1,14 +1,18 @@
+import os
+import shutil
 import pandas
 import yfinance as yf
 import sys
 from enum import Enum
 import requests
 import timeit
-import os, shutil
-import numpy as np
+import plotly.graph_objects as go
 import plotly
+import json
+from datetime import datetime, timedelta
 
 DATA_FOLDER = "instance/stocks_data"
+FORMATS_FILE = "stocks_data_formats.json"
 
 
 class Downloader:
@@ -28,14 +32,16 @@ class Downloader:
 
     def __init__(self, SYMBOL: str) -> None:
         self.SYMBOL = SYMBOL
-        self.data=self.download_data()
+        self.data = self.download_data()
 
     def download_data(self) -> pandas.DataFrame:
         df: pandas.DataFrame = yf.download(self.SYMBOL, period="10y").reset_index()
-        return pandas.DataFrame({
-            'Date': df['Date'],
-            'Adj Close': df["Adj Close"],
-        })
+        return pandas.DataFrame(
+            {
+                "Date": df["Date"],
+                "Adj Close": df["Adj Close"],
+            }
+        )
 
     def benchmark(self) -> list[(str, float, float)]:
         benchmark_results = list[(str, float, float)]()
@@ -122,12 +128,12 @@ class Downloader:
     def write_to_pkl(self) -> None:
         self.data.to_pickle(f"{DATA_FOLDER}/{self.SYMBOL}.pkl")
 
-    def write_to_yaml(self) -> None:
-        yaml.dump(self.data.to_dict(), open(f"{DATA_FOLDER}/{self.SYMBOL}.yaml", "w"))
+    # def write_to_yaml(self) -> None:
+    #     yaml.dump(self.data.to_dict(), open(f"{DATA_FOLDER}/{self.SYMBOL}.yaml", "w"))
 
-    def write_to_bson(self) -> None:
-        with open(f"{DATA_FOLDER}/{self.SYMBOL}.bson", "wb") as f:
-            f.write(bson.dumps(self.data.to_dict()))
+    # def write_to_bson(self) -> None:
+    #     with open(f"{DATA_FOLDER}/{self.SYMBOL}.bson", "wb") as f:
+    #         f.write(bson.dumps(self.data.to_dict()))
 
 
 class formats(Enum):
@@ -140,22 +146,19 @@ class formats(Enum):
 
 class Saver:
     def __init__(self):
-        if not os.path.exists(f"{DATA_FOLDER}"):
-            os.makedirs(f"{DATA_FOLDER}")
-            stocks = self.get_csv_data()
-            for stock in stocks:
-                if not os.path.exists(f"{DATA_FOLDER}/{stock}.feather"):
-                    p = Downloader(stock)
-                    p.write_to_feather()
+        pass
 
-    def save_graph(self, symbols=None, data: list[pandas.DataFrame]=None):
+    def save_graph(self, symbols=None, data: list[pandas.DataFrame] = None):
         symbols = symbols or self.symbols
         data = data or self.ret_data
-        import plotly.graph_objects as go
 
         fig = go.Figure()
         for i, d in enumerate(data):
-            fig.add_trace(go.Scatter(x=list(d['Date']), y=d["Adj Close"], mode='lines', name=symbols[i]))
+            fig.add_trace(
+                go.Scatter(
+                    x=list(d["Date"]), y=d["Adj Close"], mode="lines", name=symbols[i]
+                )
+            )
 
         fig.update_layout(
             xaxis_title="DATE",
@@ -166,9 +169,9 @@ class Saver:
                 yanchor="bottom",
                 y=1.02,
                 xanchor="right",
-                x=1
+                x=1,
             ),
-            margin=dict(l=40, r=40, t=40, b=40)
+            margin=dict(l=40, r=40, t=40, b=40),
         )
         fig.show()
         plotly.io.write_html(fig, f"{DATA_FOLDER}/graph.html")
@@ -197,24 +200,49 @@ class Saver:
             self.ret_data.append(data)
         return self.ret_data
 
-    def get_csv_data(self):
-        if not os.path.exists(f"{DATA_FOLDER}/nifty_list.csv"):
-            r = requests.get(
-                "https://drive.google.com/uc?export=download&id=15ZAkp5fo7bd7VniWNZQRIhU6LhPLR2kH",
-                allow_redirects=True,
-            )
-            open(f"{DATA_FOLDER}/nifty_list.csv", "wb").write(r.content)
-        data = pandas.read_csv(f"{DATA_FOLDER}/nifty_list.csv")
-        return data["Symbol"]
+    def get_filter_data(self):
+        if os.path.exists(f"{DATA_FOLDER}/filters.csv"):
+            if datetime.today() - datetime.fromtimestamp(
+                os.path.getmtime(f"{DATA_FOLDER}/filters.csv")
+            ) < timedelta(days=1):
+                return pandas.read_csv(f"{DATA_FOLDER}/filters.csv")
 
-    def save_filter_data(self):
-        syms = self.get_csv_data()
-        data = dict()
-        nse_live = NSELive()
-        for stock_sym in syms:
-            data[stock_sym] = nse_live.stock_quote(stock_sym)["priceInfo"]["close"]
-        data = pandas.DataFrame(data.items(), columns=["Symbol", "Price"])
-        data.to_csv(f"{DATA_FOLDER}/stock_prices.csv", index=False)
+        with open(FORMATS_FILE, "r") as f:
+            data = json.load(f)
+        symbols = data["symbols"]
+        categories = data["categories"]
+        df = []
+        for symbol in symbols:
+            m = yf.Ticker(symbol).info
+            d = {"symbol": symbol}
+            for category in categories:
+                d[category] = m[category]
+            df.append(d)
+        df = pandas.DataFrame(df)
+        df.to_csv(f"{DATA_FOLDER}/filters.csv", index=False)
+        return df
+
+
+class Filter:
+    def __init__(self):
+        self.saver = Saver()
+        self.data = self.saver.get_filter_data()
+
+    def range_filter_bookValue(self, min, max, data=None):
+        return self.__range_filter("bookValue", data, min, max)
+
+    def range_filter_averageVolume(self, min, max, data=None):
+        return self.__range_filter("averageVolume", data, min, max)
+
+    def range_filter_twoHundredDayAverage(self, min, max, data=None):
+        return self.__range_filter("twoHundredDayAverage", data, min, max)
+
+    def __range_filter(self, category, data, min, max):
+        if min > max:
+            raise ValueError("min should be less than max")
+        if type(data) == type(None):
+            data = self.data
+        return data[(data[category] >= min) & (data[category] <= max)]
 
 
 def main():
@@ -247,5 +275,35 @@ def main():
             print("Wrong option", sys.argv[1])
 
 
+def test_stock_data_formats_json():
+    import json
+
+    with open(FORMATS_FILE, "r") as f:
+        data = json.load(f)
+
+    for stock in data["symbols"]:
+        m = yf.Ticker(stock).info
+        for category in data["categories"]:
+            try:
+                m[category]
+            except Exception as e:
+                print(stock, category, e)
+                continue
+
+    print("All stocks have all categories!")
+
+
+def test():
+    f = Filter()
+
+    m = f.range_filter_bookValue(300, 600)
+    print(m)
+    m = f.range_filter_twoHundredDayAverage(400, 600, m)
+    print(m)
+    m = f.range_filter_averageVolume(16040000, 16041500, m)
+    print(m)
+
+
 if __name__ == "__main__":
-    main()
+    test_stock_data_formats_json()
+    test()
