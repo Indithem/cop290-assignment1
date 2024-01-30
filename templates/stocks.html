@@ -6,94 +6,47 @@
   <title>Filters</title>
   <!-- Include your CSS file -->
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.4/nouislider.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.4/nouislider.min.css" rel="stylesheet">
 </head>
 <body>
-  <form id="form2" action="POST">
+  <form id="form" method="POST">
     <h1 style="color: rgb(128, 0, 75);">Apply Filters</h1>
-    <input type="text" id="searchInput" placeholder="Search...">
-    <div id="multiSelect">
-      <!-- Average Price -->
-      <label class="checkbox-label">
-        <input type="checkbox" name="avgPriceCheckbox" id="avgPriceCheckbox"> Include Average Price Range
-        <input type="number" min="0" max="100000" value="0" id="averagePriceMin" placeholder="Min" style="display: none;">
-        <input type="number" min="0" max="100000" value="100000" id="averagePriceMax" placeholder="Max" style="display: none;">
-      </label>
-      <!-- P/E Ratio -->
-      <label class="checkbox-label">
-        <input type="checkbox" name="peRatioCheckbox" id="peRatioCheckbox"> Include P/E Ratio Range
-        <input type="number" min="0" max="100" value="0" id="peRatioMin" placeholder="Min" style="display: none;">
-        <input type="number" min="0" max="100" value="100" id="peRatioMax" placeholder="Max" style="display: none;">
-      </label>
-      <!-- Sort Options -->
-      <label class="checkbox-label"> Sort Options:</label>
-      <label class="checkbox-label">
-        <input type="radio" name="sortOption" value="lowToHigh"> Low to High
-      </label>
-      <label class="checkbox-label">
-        <input type="radio" name="sortOption" value="highToLow"> High to Low
-      </label>
-      <!-- None Option -->
-      <label class="checkbox-label">
-        <input type="checkbox" name="noneOption" value="none"> None
-      </label>
+    <div>
+      <p>Choose Min and Max Values:</p>
+      <div id="min-max-slider"></div>
+      <p>
+          <label for="min">Min Value:</label>
+          <input type="text" id="min" name="min" readonly style="border:0; color:#f6931f; font-weight:bold;">
+      </p>
+      <p>
+          <label for="max">Max Value:</label>
+          <input type="text" id="max" name="max" readonly style="border:0; color:#f6931f; font-weight:bold;">
+      </p>
+  </div>
+  <div id="multiSelect">
+        <!-- Sort Options -->
+    <label class="checkbox-label"> Sort Options:</label>
+    <label class="checkbox-label">
+      <input type="radio" name="sortOption" value="lowToHigh"> Low to High
+    </label>
+    <label class="checkbox-label">
+      <input type="radio" name="sortOption" value="highToLow"> High to Low
+    </label>
+    <!-- None Option -->
+    <label class="checkbox-label">
+      <input type="checkbox" name="noneOption" value="none"> None
+    </label>
     </div>
-    <br>
-    <a href="image.jpeg" class="logout-button">Proceed</a>
+    <button type="proceed">Proceed</a>
+    </form>
     <a href="/logout" class="logout-button">Logout</a>
-  </form>
-  
-<!-- JavaScript -->
 
+<script src="{{ url_for('static', filename='stocks_script.js') }}"></script>
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
-    var avgPriceCheckbox = document.getElementById("avgPriceCheckbox");
-    var peRatioCheckbox = document.getElementById("peRatioCheckbox");
-    var averagePriceMin = document.getElementById("averagePriceMin");
-    var averagePriceMax = document.getElementById("averagePriceMax");
-    var peRatioMin = document.getElementById("peRatioMin");
-    var peRatioMax = document.getElementById("peRatioMax");
-    var sortOptions = document.getElementsByName("sortOption");
-    var noneOption = document.getElementsByName("noneOption")[0];
-  
-    // Toggle average price range inputs visibility
-    avgPriceCheckbox.addEventListener("change", function() {
-        if (avgPriceCheckbox.checked) {
-            averagePriceMin.style.display = "inline-block";
-            averagePriceMax.style.display = "inline-block";
-        } else {
-            averagePriceMin.style.display = "none";
-            averagePriceMax.style.display = "none";
-        }
-    });
-  
-    // Toggle P/E ratio range inputs visibility
-    peRatioCheckbox.addEventListener("change", function() {
-        if (peRatioCheckbox.checked) {
-            peRatioMin.style.display = "inline-block";
-            peRatioMax.style.display = "inline-block";
-        } else {
-            peRatioMin.style.display = "none";
-            peRatioMax.style.display = "none";
-        }
-    });
-  
-    // Handle "None" option clearing other selections
-    noneOption.addEventListener("change", function() {
-      if (noneOption.checked) {
-        // Clear other checkboxes and radio buttons
-        avgPriceCheckbox.checked = false;
-        peRatioCheckbox.checked = false;
-        sortOptions.forEach(function(option) {
-          option.checked = false;
-        });
-  
-        // Hide related input fields
-        averagePriceMin.style.display = "none";
-        averagePriceMax.style.display = "none";
-        peRatioMin.style.display = "none";
-        peRatioMax.style.display = "none";
-      }
-    });
-  });
-  </script>
-  
+    document.addEventListener('DOMContentLoaded', function () {
+      make_slider("min-max-slider",0,100 ,"min", "max")
+  })
+</script>
+
+</body>

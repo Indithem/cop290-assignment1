@@ -114,13 +114,18 @@ def logout():
     session.pop("username", None)
     return redirect(url_for("index"))
 
-@app.route("/stocks")
+@app.route("/stocks", methods=["GET", "POST"])
 def stocks():
-    if "user_id" in session:
-        return render_template("stocks.html")
+    print("hello")
+    if request.method == "GET":
+        if "user_id" in session:
+            return render_template("stocks.html")
+        else:
+            flash("Please login first!")
+            return render_template("login.html")
     else:
-        flash("Please login first!")
-        return render_template("login.html")
+        print(request.form)
+        return render_template("stocks.html")
 
 
 if __name__ == "__main__":

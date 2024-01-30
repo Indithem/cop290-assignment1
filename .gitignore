@@ -4,3 +4,5 @@ nifty_list.csv
 __pycache__
 /*.png
 instance
+
+/stock_data/
