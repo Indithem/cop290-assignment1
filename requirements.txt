@@ -13,3 +13,6 @@ yfinance[nospam]
 pandas
 pyarrow
 plotly
+pyjanitor
+datetime
+python-dateutil

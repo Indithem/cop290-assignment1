@@ -10,6 +10,9 @@ import plotly.graph_objects as go
 import plotly
 import json
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
+import pytz
+import janitor
 
 DATA_FOLDER = "instance/stocks_data"
 FORMATS_FILE = "stocks_data_formats.json"
@@ -35,10 +38,17 @@ class Downloader:
         self.data = self.download_data()
 
     def download_data(self) -> pandas.DataFrame:
-        df: pandas.DataFrame = yf.download(self.SYMBOL, period="10y").reset_index()
+        df1: pandas.DataFrame = yf.download(
+            self.SYMBOL, end=datetime.today()-relativedelta(months=1), start=datetime.today()-relativedelta(years=10),
+            interval="1d", ignore_tz=False
+        )
+        today = datetime.now(pytz.timezone("Asia/Kolkata")).replace(hour=0, minute=0, second=0, microsecond=0)
+        df2 = yf.download(self.SYMBOL, period="1mo", interval="15m", ignore_tz=False)
+        dates_range = pandas.date_range(end= today,start=today-relativedelta(years=10), freq="D")
+        df = pandas.concat([df2, df1]).sort_index(ascending=False).complete()
         return pandas.DataFrame(
             {
-                "Date": df["Date"],
+                "Datetime": df.index,
                 "Adj Close": df["Adj Close"],
             }
         )
@@ -156,7 +166,10 @@ class Saver:
         for i, d in enumerate(data):
             fig.add_trace(
                 go.Scatter(
-                    x=list(d["Date"]), y=d["Adj Close"], mode="lines", name=symbols[i]
+                    x=list(d["Datetime"]),
+                    y=d["Adj Close"],
+                    mode="lines",
+                    name=symbols[i],
                 )
             )
 
@@ -176,27 +189,39 @@ class Saver:
         fig.show()
         plotly.io.write_html(fig, f"{DATA_FOLDER}/graph.html")
 
-    def save_graph_data(self, symbols, format):
+    def save_graph_data(self, symbols, format:formats):
         self.symbols = symbols
         self.ret_data = []
         for symbol in symbols:
-            if not os.path.exists(f"{DATA_FOLDER}/{symbol}.feather"):
-                p = Downloader(symbol)
-                data = p.data
-                p.write_to_feather()
-            else:
-                data = pandas.read_feather(f"{DATA_FOLDER}/{symbol}.feather")
+            p = Downloader(symbol)
+            data = p.data
             match format:
                 case formats.daily:
-                    data = data[:10]
+                    data = data[
+                        data["Datetime"]
+                        >= datetime.now(pytz.timezone("Asia/Kolkata"))
+                        - relativedelta(days=10)
+                    ]
                 case formats.weekly:
-                    data = data[: 7 * 10]
+                    data = data[
+                        data["Datetime"]
+                        >= datetime.now(pytz.timezone("Asia/Kolkata"))
+                        - relativedelta(months=2)
+                    ]
                 case formats.monthly:
-                    data = data[: 30 * 10]
+                    data = data[
+                        data["Datetime"]
+                        >= datetime.now(pytz.timezone("Asia/Kolkata"))
+                        - relativedelta(years=1)
+                    ]
                 case formats.quarterly:
-                    data = data[: 90 * 10]
+                    data = data[
+                        data["Datetime"]
+                        >= datetime.now(pytz.timezone("Asia/Kolkata"))
+                        - relativedelta(years=4)
+                    ]
                 case formats.yearly:
-                    data = data[: 365 * 10]
+                    data = data
             self.ret_data.append(data)
         return self.ret_data
 
@@ -239,7 +264,9 @@ class Filter:
     def __range_filter(self, category, min, max):
         if min > max:
             raise ValueError("min should be less than max")
-        self.data = self.data[(self.data[category] >= min) & (self.data[category] <= max)]
+        self.data = self.data[
+            (self.data[category] >= min) & (self.data[category] <= max)
+        ]
         return self
 
     def sort_filter_bookValue(self, ascending=True):
@@ -249,10 +276,10 @@ class Filter:
         return self.__sort_filter("averageVolume", ascending)
 
     def sort_filter_twoHundredDayAverage(self, ascending=True):
-        return self.__sort_filter("twoHundredDayAverage",  ascending)
+        return self.__sort_filter("twoHundredDayAverage", ascending)
 
     def __sort_filter(self, category, ascending):
-        self.data= self.data.sort_values(category, ascending=ascending)
+        self.data = self.data.sort_values(category, ascending=ascending)
         return self
 
 
@@ -307,7 +334,7 @@ def test_stock_data_formats_json():
 def test():
     f = Filter()
 
-    f.range_filter_bookValue(300,600).sort_filter_twoHundredDayAverage(ascending=False)
+    f.range_filter_bookValue(300, 600).sort_filter_twoHundredDayAverage(ascending=False)
     print(f.data)
     f.range_filter_twoHundredDayAverage(400, 600)
     print(f.data)
@@ -317,4 +344,4 @@ def test():
 
 if __name__ == "__main__":
     # test_stock_data_formats_json()
-    test()
+    main()
