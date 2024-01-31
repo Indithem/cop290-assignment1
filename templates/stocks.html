@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Filters</title>
-  <script src="/static/stocks_script.js"></script>
+  <script src="{{ url_for('static', filename='stocks_script.js') }}"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.4/nouislider.min.js"></script>
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.4/nouislider.min.css" rel="stylesheet">
@@ -56,16 +56,6 @@
       </div>
     </div>
 
-    <br>
-    <label for="frequency">Choose a frequency:</label>
-    <select name="frequency" id="frequency">
-      <option value="daily">daily</option>
-      <option value="weekly">weekly</option>
-      <option value="monthly">monthly</option>
-      <option value="quarterly">quarterly</option>
-      <option value="yearly">yearly</option>
-    </select>
-    <br><br>
 
     <label for="sort_by">Sort by:</label>
     <select name="sort_by" id="sort_by">
@@ -87,19 +77,46 @@
   </form>
 </div> 
 
+{%if stocks%}
 <div class="options-container">
-  <input type="text" id="search" placeholder="Search options...">
-  <form id="stocks" method="POST">
-
-    <br>
-    <label><input type="checkbox" name="option1"> <span class="custom-checkbox"></span> Option 1</label><br>
-    <label><input type="checkbox" name="option2"> <span class="custom-checkbox"></span> Option 2</label><br>
-    <label><input type="checkbox" name="option3"> <span class="custom-checkbox"></span> Option 3</label><br>
-    <label><input type="checkbox" name="option4"> <span class="custom-checkbox"></span> Option 4</label><br>
-    <label><input type="checkbox" name="option5"> <span class="custom-checkbox"></span> Option 5</label><br>
-    <button type="submit" name="stocks" class="logout-button">Get graph!</button>
-  </form>
+  {%if stocks|length == 1%}
+    <h1 style="color: rgb(255, 45, 45);">No stocks match the filters!</h1>
+  {%else%}
+    <input type="text" id="search" placeholder="Search options...">
+    <form id="stocks" method="POST">
+      <label for="frequency">Choose a frequency:</label>
+      <select name="frequency" id="frequency">
+        <option value="daily">daily</option>
+        <option value="weekly">weekly</option>
+        <option value="monthly">monthly</option>
+        <option value="quarterly">quarterly</option>
+        <option value="yearly">yearly</option>
+      </select>
+      <br>
+      {%for stock in stocks[1:]%}    
+      <label><input type="checkbox" name="{{stock['symbol']}}"> <span class="custom-checkbox"></span> {{stock['longName']}}</label><br>
+      {%endfor%}  
+      <button type="submit" name="stocks" class="logout-button">Get graph!</button>
+    </form>
+  {%endif%}
 </div>
+{%endif%}
+
+<div id="plotlyDiv"></div>
+    <script>
+        var plotly_str = {{ plot_data| tojson| safe }};
+        let plotly_data = JSON.parse(plotly_str);
+        
+        Plotly.react('plotlyDiv', plotly_data.data, plotly_data.layout);
+    </script>
+
+<script>
+  document.addEventListener('DOMContentLoaded',function(){
+    make_slider("avgPriceSlider", {{ranges['avg'][0]}}, {{ranges['avg'][1]}}, "averagePriceMin", "averagePriceMax");
+    make_slider("Volumeslider", {{ranges['vol'][0]}}, {{ranges['vol'][1]}}, "Vol_min", "Vol_max"); 
+  })
+
+</script>
 
 </body>
 </html>

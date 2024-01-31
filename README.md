@@ -40,3 +40,5 @@
 * Stocks being updated live before graph is plotted as in tradingview.com 
 * Progressive Web App
 * Redirect in successfull login from /stocks page.
+* Top bulls / bears
+* Stocks move out of page, make a scroll bar!

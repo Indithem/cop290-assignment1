@@ -54,11 +54,7 @@ class Downloader:
             hour=0, minute=0, second=0, microsecond=0
         )
         df2 = yf.download(
-            self.SYMBOL,
-            period="1mo",
-            interval="15m",
-            ignore_tz=False,
-            session=session
+            self.SYMBOL, period="1mo", interval="15m", ignore_tz=False, session=session
         )
         dates_range = pandas.date_range(
             end=today, start=today - relativedelta(years=10), freq="D"
@@ -177,6 +173,9 @@ class Saver:
         pass
 
     def get_graph(self, symbols=None, data: list[pandas.DataFrame] = None):
+        """
+        Returns a plotly json corresponding to the data
+        """
         symbols = symbols or self.symbols
         data = data or self.ret_data
 
@@ -206,7 +205,10 @@ class Saver:
         )
         return fig.to_json()
 
-    def get_graph_data(self, symbols, format: formats):
+    def get_graph_data(self, symbols, format: formats) -> list[pandas.DataFrame]:
+        """
+        Gets a list of dataframes corresponding to the stock
+        """
         self.symbols = symbols
         self.ret_data = []
         for symbol in symbols:
@@ -228,6 +230,9 @@ class Saver:
         return self.ret_data
 
     def get_filter_data(self):
+        """
+        downloads or loads the filters' data whichever is fresh
+        """
         if os.path.exists(f"{DATA_FOLDER}/filters.csv"):
             if datetime.today() - datetime.fromtimestamp(
                 os.path.getmtime(f"{DATA_FOLDER}/filters.csv")
@@ -251,8 +256,12 @@ class Saver:
 
 
 class Filter:
+    """
+    filters,sorts,gets min/max ranges of the data from Saver, according to the filters
+    """
+
     def __init__(self):
-        self.data = Saver().get_filter_data()
+        self.data: list[pandas.DataFrame] = Saver().get_filter_data()
 
     def range_filter_bookValue(self, min, max):
         return self.__range_filter("bookValue", min, max)
@@ -264,6 +273,7 @@ class Filter:
         return self.__range_filter("twoHundredDayAverage", min, max)
 
     def __range_filter(self, category, min, max):
+        min, max = float(min), float(max)
         if min > max:
             raise ValueError("min should be less than max")
         self.data = self.data[
@@ -283,6 +293,18 @@ class Filter:
     def __sort_filter(self, category, ascending):
         self.data = self.data.sort_values(category, ascending=ascending)
         return self
+
+    def get_range_bookValue(self):
+        return self.__get_ranges("bookValue")
+    
+    def get_range_averageVolume(self):
+        return self.__get_ranges("averageVolume")
+
+    def get_range_twoHundredDayAverage(self):
+        return self.__get_ranges("twoHundredDayAverage")
+
+    def __get_ranges(self, category):
+        return self.data[category].min(), self.data[category].max()
 
 
 def main():
