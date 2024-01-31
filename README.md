@@ -31,6 +31,9 @@
     * p/e ratio
     * average (VWAP=average)
     * sort high to low/low to high/ alphabetical  
+* Cache downloaded data(if needed, I think yfinance caches downloads)
+* hourly data
+* Ads
 * Download today's data for all available stocks
 * Update today's data for a particular stock if the data downloaded before is outdated
 * Stocks being updated live before graph is plotted as in tradingview.com 

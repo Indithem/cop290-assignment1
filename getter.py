@@ -39,12 +39,19 @@ class Downloader:
 
     def download_data(self) -> pandas.DataFrame:
         df1: pandas.DataFrame = yf.download(
-            self.SYMBOL, end=datetime.today()-relativedelta(months=1), start=datetime.today()-relativedelta(years=10),
-            interval="1d", ignore_tz=False
+            self.SYMBOL,
+            end=datetime.today() - relativedelta(months=1),
+            start=datetime.today() - relativedelta(years=10),
+            interval="1d",
+            ignore_tz=False,
         )
-        today = datetime.now(pytz.timezone("Asia/Kolkata")).replace(hour=0, minute=0, second=0, microsecond=0)
+        today = datetime.now(pytz.timezone("Asia/Kolkata")).replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
         df2 = yf.download(self.SYMBOL, period="1mo", interval="15m", ignore_tz=False)
-        dates_range = pandas.date_range(end= today,start=today-relativedelta(years=10), freq="D")
+        dates_range = pandas.date_range(
+            end=today, start=today - relativedelta(years=10), freq="D"
+        )
         df = pandas.concat([df2, df1]).sort_index(ascending=False).complete()
         return pandas.DataFrame(
             {
@@ -158,7 +165,7 @@ class Saver:
     def __init__(self):
         pass
 
-    def save_graph(self, symbols=None, data: list[pandas.DataFrame] = None):
+    def get_graph(self, symbols=None, data: list[pandas.DataFrame] = None):
         symbols = symbols or self.symbols
         data = data or self.ret_data
 
@@ -186,40 +193,24 @@ class Saver:
             ),
             margin=dict(l=40, r=40, t=40, b=40),
         )
-        fig.show()
-        plotly.io.write_html(fig, f"{DATA_FOLDER}/graph.html")
+        return fig.to_json()
 
-    def save_graph_data(self, symbols, format:formats):
+    def get_graph_data(self, symbols, format: formats):
         self.symbols = symbols
         self.ret_data = []
         for symbol in symbols:
             p = Downloader(symbol)
             data = p.data
+            today = datetime.now(pytz.timezone("Asia/Kolkata"))
             match format:
                 case formats.daily:
-                    data = data[
-                        data["Datetime"]
-                        >= datetime.now(pytz.timezone("Asia/Kolkata"))
-                        - relativedelta(days=10)
-                    ]
+                    data = data[data["Datetime"] >= today - relativedelta(days=10)]
                 case formats.weekly:
-                    data = data[
-                        data["Datetime"]
-                        >= datetime.now(pytz.timezone("Asia/Kolkata"))
-                        - relativedelta(months=2)
-                    ]
+                    data = data[data["Datetime"] >= today - relativedelta(months=2)]
                 case formats.monthly:
-                    data = data[
-                        data["Datetime"]
-                        >= datetime.now(pytz.timezone("Asia/Kolkata"))
-                        - relativedelta(years=1)
-                    ]
+                    data = data[data["Datetime"] >= today - relativedelta(years=1)]
                 case formats.quarterly:
-                    data = data[
-                        data["Datetime"]
-                        >= datetime.now(pytz.timezone("Asia/Kolkata"))
-                        - relativedelta(years=4)
-                    ]
+                    data = data[data["Datetime"] >= today - relativedelta(years=4)]
                 case formats.yearly:
                     data = data
             self.ret_data.append(data)
@@ -292,8 +283,8 @@ def main():
         case "graph":
             Format = formats[sys.argv[2]]
             symbols = sys.argv[3:]
-            data = s.save_graph_data(symbols, Format)
-            s.save_graph(symbols, data)
+            data = s.get_graph_data(symbols, Format)
+            s.get_graph(symbols, data)
         case "filters":
             s.save_filter_data()
         case "download":
