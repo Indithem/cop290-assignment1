@@ -2,6 +2,8 @@ import os
 import shutil
 import pandas
 import yfinance as yf
+import yfinance_cache as yfc
+import requests_cache
 import sys
 from enum import Enum
 import requests
@@ -16,6 +18,8 @@ import janitor
 
 DATA_FOLDER = "instance/stocks_data"
 FORMATS_FILE = "stocks_data_formats.json"
+
+session = requests_cache.CachedSession(f"{DATA_FOLDER}/yfinance.cache")
 
 
 class Downloader:
@@ -44,11 +48,18 @@ class Downloader:
             start=datetime.today() - relativedelta(years=10),
             interval="1d",
             ignore_tz=False,
+            session=session,
         )
         today = datetime.now(pytz.timezone("Asia/Kolkata")).replace(
             hour=0, minute=0, second=0, microsecond=0
         )
-        df2 = yf.download(self.SYMBOL, period="1mo", interval="15m", ignore_tz=False)
+        df2 = yf.download(
+            self.SYMBOL,
+            period="1mo",
+            interval="15m",
+            ignore_tz=False,
+            session=session
+        )
         dates_range = pandas.date_range(
             end=today, start=today - relativedelta(years=10), freq="D"
         )
@@ -229,7 +240,7 @@ class Saver:
         categories = data["categories"]
         df = []
         for symbol in symbols:
-            m = yf.Ticker(symbol).info
+            m = yfc.Ticker(symbol).info
             d = {"symbol": symbol}
             for category in categories:
                 d[category] = m[category]
@@ -300,6 +311,8 @@ def main():
                         print("Failed to delete %s. Reason: %s" % (file_path, e))
                 os.rmdir(DATA_FOLDER)
             s = Saver()
+        case "test":
+            test_stock_data_formats_json()
         case _:
             print("Wrong option", sys.argv[1])
 
@@ -311,7 +324,7 @@ def test_stock_data_formats_json():
         data = json.load(f)
 
     for stock in data["symbols"]:
-        m = yf.Ticker(stock).info
+        m = yfc.Ticker(stock).info
         for category in data["categories"]:
             try:
                 m[category]

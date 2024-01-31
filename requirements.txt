@@ -10,6 +10,8 @@ typing_extensions
 Werkzeug
 Flask-WTF
 yfinance[nospam]
+yfinance-cache
+requests-cache
 pandas
 pyarrow
 plotly
