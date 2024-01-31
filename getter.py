@@ -225,24 +225,35 @@ class Saver:
 
 class Filter:
     def __init__(self):
-        self.saver = Saver()
-        self.data = self.saver.get_filter_data()
+        self.data = Saver().get_filter_data()
 
-    def range_filter_bookValue(self, min, max, data=None):
-        return self.__range_filter("bookValue", data, min, max)
+    def range_filter_bookValue(self, min, max):
+        return self.__range_filter("bookValue", min, max)
 
-    def range_filter_averageVolume(self, min, max, data=None):
-        return self.__range_filter("averageVolume", data, min, max)
+    def range_filter_averageVolume(self, min, max):
+        return self.__range_filter("averageVolume", min, max)
 
-    def range_filter_twoHundredDayAverage(self, min, max, data=None):
-        return self.__range_filter("twoHundredDayAverage", data, min, max)
+    def range_filter_twoHundredDayAverage(self, min, max):
+        return self.__range_filter("twoHundredDayAverage", min, max)
 
-    def __range_filter(self, category, data, min, max):
+    def __range_filter(self, category, min, max):
         if min > max:
             raise ValueError("min should be less than max")
-        if type(data) == type(None):
-            data = self.data
-        return data[(data[category] >= min) & (data[category] <= max)]
+        self.data = self.data[(self.data[category] >= min) & (self.data[category] <= max)]
+        return self
+
+    def sort_filter_bookValue(self, ascending=True):
+        return self.__sort_filter("bookValue", ascending)
+
+    def sort_filter_averageVolume(self, ascending=True):
+        return self.__sort_filter("averageVolume", ascending)
+
+    def sort_filter_twoHundredDayAverage(self, ascending=True):
+        return self.__sort_filter("twoHundredDayAverage",  ascending)
+
+    def __sort_filter(self, category, ascending):
+        self.data= self.data.sort_values(category, ascending=ascending)
+        return self
 
 
 def main():
@@ -296,14 +307,14 @@ def test_stock_data_formats_json():
 def test():
     f = Filter()
 
-    m = f.range_filter_bookValue(300, 600)
-    print(m)
-    m = f.range_filter_twoHundredDayAverage(400, 600, m)
-    print(m)
-    m = f.range_filter_averageVolume(16040000, 16041500, m)
-    print(m)
+    f.range_filter_bookValue(300,600).sort_filter_twoHundredDayAverage(ascending=False)
+    print(f.data)
+    f.range_filter_twoHundredDayAverage(400, 600)
+    print(f.data)
+    f.range_filter_averageVolume(16040000, 16041500)
+    print(f.data)
 
 
 if __name__ == "__main__":
-    test_stock_data_formats_json()
+    # test_stock_data_formats_json()
     test()
