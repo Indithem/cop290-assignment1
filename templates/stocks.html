@@ -4,49 +4,103 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Filters</title>
-  <!-- Include your CSS file -->
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+  <script src="/static/stocks_script.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.4/nouislider.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.4/nouislider.min.css" rel="stylesheet">
 </head>
 <body>
+<div class="stocks-body">
   <form id="form" method="POST">
     <h1 style="color: rgb(128, 0, 75);">Apply Filters</h1>
-    <div>
-      <p>Choose Min and Max Values:</p>
-      <div id="min-max-slider"></div>
-      <p>
-          <label for="min">Min Value:</label>
-          <input type="text" id="min" name="min" readonly style="border:0; color:#f6931f; font-weight:bold;">
+    <div id="avgPriceFilter">
+      <input type="checkbox" id="avgPriceCheckbox" name="avgPriceCheckbox"> Choose Average Price Range
+      <div id="avgPriceSlider" style="display: none;"></div>
+      <p id="averagePriceMinLabel" style="display: none;">
+          <label for="averagePriceMin" >Min Average Price:</label>
+          <input type="text2" id="averagePriceMin" name="averagePriceMin" readonly style="border:0; color:#f6931f; font-weight:bold; ">
       </p>
-      <p>
-          <label for="max">Max Value:</label>
-          <input type="text" id="max" name="max" readonly style="border:0; color:#f6931f; font-weight:bold;">
+      <br>
+      <p id="averagePriceMaxLabel" style="display: none;">
+          <label for="averagePriceMax" >Max Average Price:</label>
+          <input type="text2" id="averagePriceMax" name="averagePriceMax" readonly style="border:0; color:#f6931f; font-weight:bold; ">
       </p>
-  </div>
-  <div id="multiSelect">
-        <!-- Sort Options -->
-    <label class="checkbox-label"> Sort Options:</label>
-    <label class="checkbox-label">
-      <input type="radio" name="sortOption" value="lowToHigh"> Low to High
-    </label>
-    <label class="checkbox-label">
-      <input type="radio" name="sortOption" value="highToLow"> High to Low
-    </label>
-    <!-- None Option -->
-    <label class="checkbox-label">
-      <input type="checkbox" name="noneOption" value="none"> None
-    </label>
     </div>
-    <button type="proceed">Proceed</a>
-    </form>
-    <a href="/logout" class="logout-button">Logout</a>
 
-<script src="{{ url_for('static', filename='stocks_script.js') }}"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-      make_slider("min-max-slider",0,100 ,"min", "max")
-  })
-</script>
+    <div id="Volume">
+      <input type="checkbox" id="Volumecheckbox" name="Volumecheckbox" > Choose Volume Range
+      <div id="Volumeslider" style="display: none;"></div>
+      <p id="Volumeminlabel" style="display: none;">
+        <label for="Vol_min">Min Volume:</label>
+        <input type="text2" id="Vol_min" name="Vol_min" readonly style="border:0; color:#f6931f; font-weight:bold;">
+      </p>
+      <br>
+      <p id="Volumemaxlabel" style="display: none;">
+        <label for="Vol_max">Max Volume:</label>
+        <input  type="text2"  id="Vol_max" name="Vol_max" readonly style="border:0;  color:#f6931f; font-weight:bold;">
+      </p>
+    </div>
+
+    <div id="sortOptions">
+      <label>
+        <input type="checkbox" id="sortCheckbox" name="sortCheckbox"> Sort
+      </label>
+      <div id="sortButtons" style="display: none;">
+        <label>
+          <input type="radio" id="lowToHigh" name="sortOption" value="lowToHigh"> Low to High
+        </label>
+        <label>
+          <input type="radio" id="highToLow" name="sortOption" value="highToLow"> High to Low
+        </label>
+      </div>
+    </div>
+
+    <br>
+    <label for="frequency">Choose a frequency:</label>
+    <select name="frequency" id="frequency">
+      <option value="daily">daily</option>
+      <option value="weekly">weekly</option>
+      <option value="monthly">monthly</option>
+      <option value="quarterly">quarterly</option>
+      <option value="yearly">yearly</option>
+    </select>
+    <br><br>
+
+    <label for="sort_by">Sort by:</label>
+    <select name="sort_by" id="sort_by">
+      <option value="Average Price">Average Price</option>
+      <option value="Volume">Volume</option>
+      <option value="Book value">Book value</option>
+    </select>
+    <br><br>
+
+    <div id="noneOption">
+      <label>
+          <input type="checkbox" name="noneOption" id="noneOptionCheckbox" value="none"> None
+      </label>
+  
+      <button type="submit" class="logout-button">Proceed</button>
+     
+    </div>
+  </form>
+</div> 
+
+<div class="options-container">
+  <input type="text" id="search" placeholder="Search options...">
+  <br>
+  <label><input type="checkbox" value="option1"> <span class="custom-checkbox"></span> Option 1</label><br>
+  <label><input type="checkbox" value="option2"> <span class="custom-checkbox"></span> Option 2</label><br>
+  <label><input type="checkbox" value="option3"> <span class="custom-checkbox"></span> Option 3</label><br>
+  <label><input type="checkbox" value="option4"> <span class="custom-checkbox"></span> Option 4</label><br>
+  <label><input type="checkbox" value="option5"> <span class="custom-checkbox"></span> Option 5</label><br>
+  <label><input type="checkbox" value="option6"> <span class="custom-checkbox"></span> Option 6</label><br>
+  <label><input type="checkbox" value="option7"> <span class="custom-checkbox"></span> Option 7</label><br>
+  <label><input type="checkbox" value="option8"> <span class="custom-checkbox"></span> Option 8</label><br>
+  <label><input type="checkbox" value="option9"> <span class="custom-checkbox"></span> Option 9</label><br>
+  <label><input type="checkbox" value="option10"> <span class="custom-checkbox"></span> Option 10</label><br>
+
+<a href="/logout" class="logout-button">Submit</a>
+</div>
 
 </body>
+</html>

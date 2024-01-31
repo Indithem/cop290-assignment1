@@ -74,7 +74,7 @@ button {
     margin-top: -5px;
 }
 .home-body {
-    background-image: url(/static/temp.png);
+    background-image: url(/static/background.png);
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: center;
@@ -84,41 +84,72 @@ button {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    margin-left: -580px;
-    margin-top: -150px;
-
-
-    
+    margin-left: 760px;
+    margin-top: -90px;    
 }
 .home-content {
     text-align: center; /* Optional: Center align content */
     padding: 20px; /* Optional: Add padding */
     box-shadow: 25px,50px,50px,rgb(225, 192, 255);
-    color:rgb(226, 43, 159);
-    margin-left: 170px;
+    color:gold;
+    margin-left: 200px;
     font-size: 20px;
     font-style: bold;
     text-decoration:solid;
 }
 
+.stocks-body {
+    
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    background-size: cover;
+    font-family: 'Arial', sans-serif; /* Optional: Set font-family */
+    display: flex; /* Optional: Flexbox display properties */
+    justify-content: center;
+    align-items: center;
+    margin-left: -90px;
+    margin-top: -90px;  
+    
+}
+.stock-content {
+    text-align: center; /* Optional: Center align content */
+    padding: 20px; /* Optional: Add padding */
+    box-shadow: 25px,50px,50px,rgb(225, 192, 255);
+    color:gold;
+   
+    font-size: 20px;
+    font-style: bold;
+    text-decoration:solid;
+}
+
+input[type="text2"] {
+    width: 25%;
+    padding: 10px;
+    border: 1px solid black;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
 .welcome-container h1 {
     margin-bottom: 20px;
 }
 
 .logout-button2{
     display: inline-block;
-    padding: 2px 18px;
+    padding: 5px 20px;
     background-color: black;
     color: greenyellow;
     
-    border-radius: 5px;
-    text-decoration: none;
-    margin-top: 150px;
-    margin-right: 600px;
+    border-radius: 10px;
+    text-decoration:underline;
+    font-size: 20px;
+    margin-top: -300px;
+    margin-right: 620px;
+    text-align: center;
 }
 
 .logout-button2:hover {
-    background-color: blueviolet;
+    background-color: rgb(226, 147, 43);
 }
 
 .checkbox-label {
@@ -143,81 +174,47 @@ button {
 .logout-button:hover {
     background-color: #c82333;
 }
-/* 
 
-body{
-    background:linear-gradient(to left,skyblue,lightgreen);
-    background-repeat:no-repeat;
-    background-attachment: fixed;
-    background-image: url(image.jpeg);
-    background-size: cover;
+.options-container{
+
+      /* Basic styling for the select dropdown */
+      .select-box {
+        width: 300px;
+      }
+  
+      /* Hide the native checkbox */
+      input[type="checkbox"] {
+        display: none;
+      }
+  
+      /* Custom checkbox */
+      .custom-checkbox {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        background-color: #eee;
+        border-radius: 3px;
+        position: relative;
+        cursor: pointer;
+      }
+  
+      /* Tick mark inside the custom checkbox */
+      .custom-checkbox:after {
+        content: '✓';
+        font-size: 14px;
+        color: green;
+        position: absolute;
+        top: 2px;
+        left: 5px;
+        display: none;
+      }
+  
+      /* Show the tick mark when the checkbox is checked */
+      input[type="checkbox"]:checked + .custom-checkbox:after {
+        display: block;
+      }
+    margin-left: 700px;
+    margin-top: -170px;
 
 }
-h1{
-    color: white;
-}
-#p1{
-    color:aqua;
-    font-family: "Press Start 2P",sans-serif;
-    font-style: italic;
-    font-weight: bolder;
-    text-decoration: cyan dotted underline;
-    font-size: 18px;
-}
-#p2{
-    border-style: solid;
-    border-top-style: dotted;
-    border-right-color: silver;
-    border-left-width: 10px;
-    border-radius: 10px;
-    padding: 5px;
-}
-.odd{
-    color: red;
-}
-.even{
-    color: blue;
-}
-#box1{
-    margin-left: 200px;
-    border: 5px solid;
-    width: 250px;
-    height: 250px;
-    font-size: 22px;
-    background: pink;
-    margin: 600px;
-    text-align: center;
-    /* animation:mySlide;
-    animation-play-state: running;
-    animation-delay: 0s;
-    animation-timing-function: ease;
-    animation-iteration-count: infinite;
-    animation-duration: 5s; */
-    /* animation:3s linear 0s infinite running myOpacity; */
-/* } */
-/* #box1:hover{
-    
-} */
-
-/* @keyframes mySlide{
-    from{margin-left:100%}
-    to{margin-left:0%}
-}
-@keyframes myRotate{
-    100%{trandform:rotateY(360deg)}
-}
-@keyframes myOpacity{
-    50%{opacity: 0;}
-}
-@keyframes myScale{
-    50%{transform: scale(0.5,0.5);}
-    20%{background-color: orange;}
-    40%{background-color: green;}
-}
-@keyframes myColorChange{
-    
-}
-#img{
-    float: left;
-} */
-
+       

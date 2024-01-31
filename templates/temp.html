@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multiple Options Select with Checkboxes</title>
+  <style>
+    /* Basic styling for the select dropdown */
+    .select-box {
+      width: 300px;
+    }
+
+    /* Hide the native checkbox */
+    input[type="checkbox"] {
+      display: none;
+    }
+
+    /* Custom checkbox */
+    .custom-checkbox {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      background-color: #eee;
+      border-radius: 3px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    /* Tick mark inside the custom checkbox */
+    .custom-checkbox:after {
+      content: '✓';
+      font-size: 14px;
+      color: green;
+      position: absolute;
+      top: 2px;
+      left: 5px;
+      display: none;
+    }
+
+    /* Show the tick mark when the checkbox is checked */
+    input[type="checkbox"]:checked + .custom-checkbox:after {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<!-- HTML for the search bar and select dropdown -->
+<input type="text" id="search" placeholder="Search options...">
+<div id="options-container">
+  <label><input type="checkbox" value="option1"> <span class="custom-checkbox"></span> Option 1</label><br>
+  <label><input type="checkbox" value="option2"> <span class="custom-checkbox"></span> Option 2</label><br>
+  <label><input type="checkbox" value="option3"> <span class="custom-checkbox"></span> Option 3</label><br>
+  <label><input type="checkbox" value="option4"> <span class="custom-checkbox"></span> Option 4</label><br>
+  <label><input type="checkbox" value="option5"> <span class="custom-checkbox"></span> Option 5</label><br>
+  <label><input type="checkbox" value="option6"> <span class="custom-checkbox"></span> Option 6</label><br>
+  <label><input type="checkbox" value="option7"> <span class="custom-checkbox"></span> Option 7</label><br>
+  <label><input type="checkbox" value="option8"> <span class="custom-checkbox"></span> Option 8</label><br>
+  <label><input type="checkbox" value="option9"> <span class="custom-checkbox"></span> Option 9</label><br>
+  <label><input type="checkbox" value="option10"> <span class="custom-checkbox"></span> Option 10</label><br>
+</div>
+
+<script>
+  // JavaScript for filtering options based on search input
+  const optionsContainer = document.getElementById('options-container');
+  const checkboxes = optionsContainer.querySelectorAll('input[type="checkbox"]');
+
+  // Function to filter options based on search input
+  function filterOptions() {
+    const searchText = document.getElementById('search').value.toLowerCase();
+
+    checkboxes.forEach(checkbox => {
+      const optionText = checkbox.parentElement.textContent.toLowerCase();
+      if (optionText.indexOf(searchText) !== -1) {
+        checkbox.parentElement.style.display = 'block';
+      } else {
+        checkbox.parentElement.style.display = 'none';
+      }
+    });
+  }
+
+  // Event listener for the search input
+  document.getElementById('search').addEventListener('input', filterOptions);
+</script>
+
+</body>
+</html>
