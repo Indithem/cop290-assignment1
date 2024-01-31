@@ -1,13 +1,11 @@
 # Trading Simulator and Analyzer
 
 ## What this does?
-Downloads historical data of a _stock symbol_ for _past x years_ using [jugaad-data](https://github.com/jugaad-py/jugaad-data) API and benchmarks the time and space taken to store the data in various formats.
-A graph is stored in the file _SYMBOL.png_. Benchmark results are outputted to console.
 
 ## How to use?
 ### To use
 * Clone this repository.
-* Run `make SYMBOL=<symbol> num_years=<num_years>`. Default values of BPCL and 5 are taken if none are provided.
+* Run `make`. The server should be started.
 
 ### To clean
 * Run `make clean`
@@ -17,7 +15,6 @@ A graph is stored in the file _SYMBOL.png_. Benchmark results are outputted to c
     Only a temporary workaround is provided for debian based systems.(On which the gradescope servers run)
 
 ## Example
-![BPCL](imgs/BPCL.png)
 
 
 ## Further plans
@@ -26,3 +23,20 @@ A graph is stored in the file _SYMBOL.png_. Benchmark results are outputted to c
     * Plot multiple stocks in same time scale.
     * Apply technical filters.
 * Add navigation among pages.
+* Login System
+    * Confirm password
+    * Forgot and Change password 
+    * Give registration option if not registered
+    * Validity of username in registration page before submit button is clicked
+* Filters
+    * p/e ratio
+    * average (VWAP=average)
+    * sort high to low/low to high/ alphabetical  
+* Cache downloaded data(if needed, I think yfinance caches downloads)
+* hourly data
+* Ads
+* Download today's data for all available stocks
+* Update today's data for a particular stock if the data downloaded before is outdated
+* Stocks being updated live before graph is plotted as in tradingview.com 
+* Progressive Web App
+* Redirect in successfull login from /stocks page.

@@ -8,10 +8,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.4/nouislider.min.js"></script>
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.4/nouislider.min.css" rel="stylesheet">
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> 
 </head>
 <body>
 <div class="stocks-body">
-  <form id="form" method="POST">
+  <form id="filters" method="POST">
     <h1 style="color: rgb(128, 0, 75);">Apply Filters</h1>
     <div id="avgPriceFilter">
       <input type="checkbox" id="avgPriceCheckbox" name="avgPriceCheckbox"> Choose Average Price Range
@@ -79,27 +80,25 @@
           <input type="checkbox" name="noneOption" id="noneOptionCheckbox" value="none"> None
       </label>
   
-      <button type="submit" class="logout-button">Proceed</button>
+      <button type="submit" name="filters" class="logout-button">Proceed</button>
      
     </div>
+    <a href="/logout" class="logout-button">logout</a>
   </form>
 </div> 
 
 <div class="options-container">
   <input type="text" id="search" placeholder="Search options...">
-  <br>
-  <label><input type="checkbox" value="option1"> <span class="custom-checkbox"></span> Option 1</label><br>
-  <label><input type="checkbox" value="option2"> <span class="custom-checkbox"></span> Option 2</label><br>
-  <label><input type="checkbox" value="option3"> <span class="custom-checkbox"></span> Option 3</label><br>
-  <label><input type="checkbox" value="option4"> <span class="custom-checkbox"></span> Option 4</label><br>
-  <label><input type="checkbox" value="option5"> <span class="custom-checkbox"></span> Option 5</label><br>
-  <label><input type="checkbox" value="option6"> <span class="custom-checkbox"></span> Option 6</label><br>
-  <label><input type="checkbox" value="option7"> <span class="custom-checkbox"></span> Option 7</label><br>
-  <label><input type="checkbox" value="option8"> <span class="custom-checkbox"></span> Option 8</label><br>
-  <label><input type="checkbox" value="option9"> <span class="custom-checkbox"></span> Option 9</label><br>
-  <label><input type="checkbox" value="option10"> <span class="custom-checkbox"></span> Option 10</label><br>
+  <form id="stocks" method="POST">
 
-<a href="/logout" class="logout-button">Submit</a>
+    <br>
+    <label><input type="checkbox" name="option1"> <span class="custom-checkbox"></span> Option 1</label><br>
+    <label><input type="checkbox" name="option2"> <span class="custom-checkbox"></span> Option 2</label><br>
+    <label><input type="checkbox" name="option3"> <span class="custom-checkbox"></span> Option 3</label><br>
+    <label><input type="checkbox" name="option4"> <span class="custom-checkbox"></span> Option 4</label><br>
+    <label><input type="checkbox" name="option5"> <span class="custom-checkbox"></span> Option 5</label><br>
+    <button type="submit" name="stocks" class="logout-button">Get graph!</button>
+  </form>
 </div>
 
 </body>
