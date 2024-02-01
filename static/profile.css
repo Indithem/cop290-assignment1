@@ -1,9 +1,11 @@
   .profile-dropdown {
     display: inline-block;
-    position: relative;
+    position: fixed;
     height: 10px;
     width: 10px;
     margin-top: 10px;
+    top: 20px;
+    left: 10px;
   }
   
   .profile-button{

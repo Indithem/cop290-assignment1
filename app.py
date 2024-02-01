@@ -202,8 +202,26 @@ def forgot_password():
         else:
             flash("Invalid Username") 
             return redirect(url_for("forgot_password"))
-
-
     return render_template("forgot_password.html")
+
+@app.route("/change_password",methods=["GET","POST"])
+def change_password():
+    if request.method == "POST":
+        username = session["username"]
+        password_validator = PasswordValidator(request.form)
+        if not password_validator.validate():
+            for error in password_validator.errors.values():
+                flash(error[0])
+            return redirect(url_for("forgot_password"))
+        password = request.form["password"]
+        hashed_password = generate_password_hash(password, method="pbkdf2:sha256")
+        user = User.query.filter_by(username=username).first()
+        user.password_hash=hashed_password
+        db.session.commit()
+        flash("Password Changed,Please login with new password.")
+        return redirect(url_for("login"))
+
+    return render_template("change_password.html")
+
 if __name__ == "__main__":
     app.run(debug=True)
