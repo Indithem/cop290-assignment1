@@ -116,7 +116,7 @@ def logout():
     session.pop("username", None)
     return redirect(url_for("index"))
 
-@app.route("/stocks", methods=["GET", "POST"])
+@app.route("/stocks", methods=["GET"])
 def stocks():
     """
     Renderes the page for stocks.
@@ -129,45 +129,52 @@ def stocks():
     `stocks` list consists of the all the filtered stock symbols, starting from index 1.
     (0th index is ignored to flag that filters request is received but none match the filters)
     """
+    if "user_id" not in session:
+        flash("Please login first!")
+        return render_template("login.html")
     f = getter.Filter()
     ranges = dict()
     ranges['avg'] = f.get_range_twoHundredDayAverage()
     ranges['vol'] = f.get_range_averageVolume()
-    print(ranges)
-    if request.method == "GET":
-        if "user_id" in session:
-            return render_template("stocks.html",plot_data='None', stocks=[], ranges=ranges)
-        else:
-            flash("Please login first!")
-            return render_template("login.html")
-    else:
-        print(request.form)
-        if "filters" in request.form:
-            sort_descending = 'sortOption' in request.form and request.form['sortOption'] == 'highToLow'
-            f.range_filter_twoHundredDayAverage(
-                request.form["averagePriceMin"],
-                request.form["averagePriceMax"]
-            )
-            f.range_filter_averageVolume(
-                request.form["Vol_min"],
-                request.form["Vol_max"]
-            )
-            match request.form["sort_by"]:
-                case "Average Price":
-                    f.sort_filter_twoHundredDayAverage(not sort_descending)
-                case "Volume":
-                    f.sort_filter_averageVolume(not sort_descending)
-                case "Book value":
-                    f.sort_filter_bookValue(not sort_descending)
-            stocks = [None] + f.data.to_dict(orient="records")
-            return render_template("stocks.html",plot_data='None', stocks=stocks, ranges=ranges)
-        if "stocks" in request.form:
-            symbols = [stock for stock in request.form if request.form[stock] == "on"]
+    return render_template("stocks.html",plot_data='None', stocks=[], ranges=ranges)
 
-            saver = getter.Saver()
-            saver.get_graph_data(symbols, getter.formats[request.form['frequency']])
+           
+@app.route("/stocks_get_graph", methods=["POST"])
+def get_stocks_graph():
+    print(request.form)
+    symbols = [stock for stock in request.form if request.form[stock] == "on"]
 
-            return render_template("stocks.html",plot_data=saver.get_graph(), stocks=[], ranges=ranges)
+    saver = getter.Saver()
+    saver.get_graph_data(symbols, getter.formats[request.form['frequency']])
+
+    print("Done making graph!")
+    return saver.get_graph()
+
+
+@app.route("/stocks_get_list", methods=["POST"])
+def get_stocks_list():
+    print(request.form)
+    f = getter.Filter()
+    sort_descending = 'sortOption' in request.form and request.form['sortOption'] == 'highToLow'
+    f.range_filter_twoHundredDayAverage(
+        request.form["averagePriceMin"],
+        request.form["averagePriceMax"]
+    )
+    f.range_filter_averageVolume(
+        request.form["Vol_min"],
+        request.form["Vol_max"]
+    )
+    match request.form["sort_by"]:
+        case "Average Price":
+            f.sort_filter_twoHundredDayAverage(not sort_descending)
+        case "Volume":
+            f.sort_filter_averageVolume(not sort_descending)
+        case "Book value":
+            f.sort_filter_bookValue(not sort_descending)
+    stocks = [None] + f.data.to_dict(orient="records")
+    return render_template("stocks_layout.html", stocks=stocks)
+        
+
 
 if __name__ == "__main__":
     app.run(debug=True)

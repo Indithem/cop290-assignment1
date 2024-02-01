@@ -12,9 +12,6 @@
     var sortButtons = document.getElementById("sortButtons");
     var Vol_minLabel = document.getElementById("Volumeminlabel"); // Corrected ID
     var Volumemaxlabel = document.getElementById("Volumemaxlabel"); // Corrected ID
-    var searchInput = document.getElementById('search');
-    var checkboxes = document.querySelectorAll('.options-container input[type="checkbox"]');
-  
  
     avgPriceCheckbox.addEventListener("change", function() {
       if (avgPriceCheckbox.checked) {
@@ -67,20 +64,6 @@
       }
     });
     
-    function filterOptions() {
-      const searchText = searchInput.value.toLowerCase();
-  
-      checkboxes.forEach(checkbox => {
-        const optionText = checkbox.parentElement.textContent.toLowerCase();
-        if (optionText.indexOf(searchText) !== -1) {
-          checkbox.parentElement.style.display = 'block';
-        } else {
-          checkbox.parentElement.style.display = 'none';
-        }
-      });
-    }
-  
-    searchInput.addEventListener('input', filterOptions);
   });
   
 function make_slider(name,min_val,max_val, min_name, max_name){
@@ -106,3 +89,49 @@ function make_slider(name,min_val,max_val, min_name, max_name){
     maxInput.value = value[1];
   });
   }
+
+$(document).ready(function() {
+  $('#filters').submit(function(event) {
+      event.preventDefault(); 
+      var formData = $(this).serialize(); 
+      $.ajax({
+          type: 'POST',
+          url: '/stocks_get_list',
+          data: formData,
+          success: function(response) {
+              $('#stocks').html(response);
+          
+    $('#search').keyup(function() {
+      var input = $(this).val();
+      if (input.length > 0) {
+        $('#stocks span').each(function() {
+          if ($(this).text().toLowerCase().includes(input.toLowerCase())) {
+            $(this).show();
+          } else {
+            $(this).hide();
+          }
+        });
+      } else {
+        $('#stocks span').show();
+    }});
+    
+    $('#stocks-form').submit(function(event) {
+      event.preventDefault(); 
+      var formData = $(this).serialize(); 
+      $.ajax({
+          type: 'POST',
+          url: '/stocks_get_graph',
+          data: formData,
+          success: function(response) {
+            let plotly_data = JSON.parse(response);
+            Plotly.react('plotlyDiv', plotly_data.data, plotly_data.layout);
+          }
+      })
+    });
+  }
+
+
+      }
+      );
+  });
+});
