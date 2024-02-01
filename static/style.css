@@ -91,37 +91,39 @@ button {
     text-align: center; /* Optional: Center align content */
     padding: 20px; /* Optional: Add padding */
     box-shadow: 25px,50px,50px,rgb(225, 192, 255);
-    color:gold;
+    color:burlywood;
     margin-left: 200px;
     font-size: 20px;
     font-style: bold;
     text-decoration:solid;
 }
 
-.stocks-body {
+/* .stocks-body {
     
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: center;
     background-size: cover;
-    font-family: 'Arial', sans-serif; /* Optional: Set font-family */
-    display: flex; /* Optional: Flexbox display properties */
+    font-family: 'Arial', sans-serif;
+    display: flex; 
     justify-content: center;
     align-items: center;
     margin-left: -90px;
     margin-top: -90px;  
     
 }
+
 .stock-content {
-    text-align: center; /* Optional: Center align content */
-    padding: 20px; /* Optional: Add padding */
+    text-align: center; 
+    padding: 20px; 
     box-shadow: 25px,50px,50px,rgb(225, 192, 255);
     color:gold;
    
     font-size: 20px;
     font-style: bold;
     text-decoration:solid;
-}
+} 
+*/
 
 input[type="text2"] {
     width: 25%;
@@ -136,20 +138,22 @@ input[type="text2"] {
 
 .logout-button2{
     display: inline-block;
-    padding: 5px 20px;
-    background-color: black;
+    padding: 10px 10px;
+    background-color:black ;
     color: greenyellow;
-    
-    border-radius: 10px;
+    font-size: large;
+    border-radius: 5px;
+    width: 100px;
+    height: 100px;
+
     text-decoration:underline;
-    font-size: 20px;
     margin-top: -300px;
     margin-right: 620px;
     text-align: center;
 }
 
 .logout-button2:hover {
-    background-color: rgb(226, 147, 43);
+    background-color: rgb(226, 43, 137);
 }
 
 .checkbox-label {

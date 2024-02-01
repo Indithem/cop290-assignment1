@@ -114,7 +114,7 @@ def dashboard():
 def logout():
     session.pop("user_id", None)
     session.pop("username", None)
-    return redirect(url_for("index"))
+    return redirect(url_for("login"))
 
 @app.route("/stocks", methods=["GET", "POST"])
 def stocks():
@@ -168,6 +168,8 @@ def stocks():
             saver.get_graph_data(symbols, getter.formats[request.form['frequency']])
 
             return render_template("stocks.html",plot_data=saver.get_graph(), stocks=[], ranges=ranges)
-
+@app.route("/profile")
+def profile():
+    return render_template("profile.html", username=session["username"])
 if __name__ == "__main__":
     app.run(debug=True)
