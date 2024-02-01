@@ -18,7 +18,7 @@
     color: black;
     background-color:rgb(0, 162, 255);
    margin-bottom: 605px;
-   margin-right: 1470px;
+   margin-right: 10px;
    margin-top: -80px;
   }
   
@@ -30,7 +30,7 @@
     display: none;
     position: absolute;
     overflow:hidden;
-    background-color:rgb(215, 238, 250);
+    background-color:rgb(215, 215, 250);
     border-radius:5px;
     box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.4);
     margin-left:-14px;
