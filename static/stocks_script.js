@@ -62,8 +62,10 @@ function make_slider(name,min_val,max_val, min_name, max_name){
   }
 
 $(document).ready(function() {
+  $(".loader").hide();
   $('#filters').submit(function(event) {
       event.preventDefault(); 
+      $(".loader").show();
       var formData = $(this).serialize(); 
       $.ajax({
           type: 'POST',
@@ -71,7 +73,7 @@ $(document).ready(function() {
           data: formData,
           success: function(response) {
               $('#stocks').html(response);
-          
+              $(".loader").hide();
     $('#search').keyup(function() {
       var input = $(this).val();
       if (input.length > 0) {
@@ -88,12 +90,14 @@ $(document).ready(function() {
 
     $('#stocks-form').submit(function(event) {
       event.preventDefault(); 
+      $(".loader").show();
       var formData = $(this).serialize(); 
       $.ajax({
           type: 'POST',
           url: '/stocks_get_graph',
           data: formData,
           success: function(response) {
+            $(".loader").hide();   
             let plotly_data = JSON.parse(response);
             Plotly.react('plotlyDiv', plotly_data.data, plotly_data.layout);
           }
