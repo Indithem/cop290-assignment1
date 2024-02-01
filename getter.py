@@ -254,6 +254,11 @@ class Saver:
         df.to_csv(f"{DATA_FOLDER}/filters.csv", index=False)
         return df
 
+def get_category_data(file=FORMATS_FILE):
+    with open(file, "r") as f:
+        data = json.load(f)
+    return data["displayName"]
+
 
 class Filter:
     """
@@ -305,6 +310,15 @@ class Filter:
 
     def __get_ranges(self, category):
         return self.data[category].min(), self.data[category].max()
+
+    def _unsafe_get_ranges(self, category):
+        return self.__get_ranges(category)
+
+    def _unsafe_sort_filter(self, category, ascending=True):
+        return self.__sort_filter(category, ascending)
+    
+    def _unsafe_range_filter(self, category, min, max):
+        return self.__range_filter(category, min, max)
 
 
 def main():

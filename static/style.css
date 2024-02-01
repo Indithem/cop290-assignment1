@@ -114,32 +114,6 @@ button {
     text-decoration:solid;
 }
 
-/* .stocks-body {
-    
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: center;
-    background-size: cover;
-    font-family: 'Arial', sans-serif;
-    display: flex; 
-    justify-content: center;
-    align-items: center;
-    margin-left: -90px;
-    margin-top: -90px;  
-    
-}
-
-.stock-content {
-    text-align: center; 
-    padding: 20px; 
-    box-shadow: 25px,50px,50px,rgb(225, 192, 255);
-    color:gold;
-   
-    font-size: 20px;
-    font-style: bold;
-    text-decoration:solid;
-} 
-*/
 
 input[type="text2"] {
     width: 25%;
@@ -194,47 +168,3 @@ input[type="text2"] {
 .logout-button:hover {
     background-color: #c82333;
 }
-
-.options-container{
-
-      /* Basic styling for the select dropdown */
-      .select-box {
-        width: 300px;
-      }
-  
-      /* Hide the native checkbox */
-      input[type="checkbox"] {
-        display: none;
-      }
-  
-      /* Custom checkbox */
-      .custom-checkbox {
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        background-color: #eee;
-        border-radius: 3px;
-        position: relative;
-        cursor: pointer;
-      }
-  
-      /* Tick mark inside the custom checkbox */
-      .custom-checkbox:after {
-        content: '✓';
-        font-size: 14px;
-        color: green;
-        position: absolute;
-        top: 2px;
-        left: 5px;
-        display: none;
-      }
-  
-      /* Show the tick mark when the checkbox is checked */
-      input[type="checkbox"]:checked + .custom-checkbox:after {
-        display: block;
-      }
-    margin-left: 700px;
-    margin-top: -170px;
-
-}
-       

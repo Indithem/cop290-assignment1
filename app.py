@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField,validators
+from wtforms import StringField, PasswordField, validators
 from wtforms.validators import Length
 
 import getter
@@ -27,25 +27,30 @@ class User(db.Model):
 
 # Password Validator
 class PasswordValidator(FlaskForm):
-    password = StringField("password", validators=[
-        validators.Length(min=8, message="Password must be at least 8 characters long."),
-        validators.Regexp(
-            regex=r'^(?=.*[a-z])',
-            message="Password must contain at least one lowercase letter."
-        ),
-        validators.Regexp(
-            regex=r'^(?=.*[A-Z])',
-            message="Password must contain at least one uppercase letter."
-        ),
-        validators.Regexp(
-            regex=r'^(?=.*\d)',
-            message="Password must contain at least one number."
-        ),
-        validators.Regexp(
-            regex=r'^(?=.*[@$!%*?&])',
-            message="Password must contain at least one special character."
-        )
-    ])
+    password = StringField(
+        "password",
+        validators=[
+            validators.Length(
+                min=8, message="Password must be at least 8 characters long."
+            ),
+            validators.Regexp(
+                regex=r"^(?=.*[a-z])",
+                message="Password must contain at least one lowercase letter.",
+            ),
+            validators.Regexp(
+                regex=r"^(?=.*[A-Z])",
+                message="Password must contain at least one uppercase letter.",
+            ),
+            validators.Regexp(
+                regex=r"^(?=.*\d)", message="Password must contain at least one number."
+            ),
+            validators.Regexp(
+                regex=r"^(?=.*[@$!%*?&])",
+                message="Password must contain at least one special character.",
+            ),
+        ],
+    )
+
 
 # Initialize Database within Application Context
 with app.app_context():
@@ -68,12 +73,12 @@ def register():
             for error in password_validator.errors.values():
                 flash(error[0])
             return redirect(url_for("register"))
-      
+
         password = request.form["password"]
         hashed_password = generate_password_hash(password, method="pbkdf2:sha256")
         user = User.query.filter_by(username=username).first()
-        if user :
-            flash("Username already exists") 
+        if user:
+            flash("Username already exists")
             return redirect(url_for("register"))
 
 
@@ -88,11 +93,11 @@ def register():
     return render_template("register.html")
 
 
-@app.route("/login", methods=["POST","GET"])
+@app.route("/login", methods=["POST", "GET"])
 def login():
     if "user_id" in session:
         return redirect(url_for("dashboard"))
-    if request.method=="GET":
+    if request.method == "GET":
         return render_template("login.html")
     username = request.form["username"]
     password = request.form["password"]
@@ -122,7 +127,8 @@ def logout():
     session.pop("username", None)
     return redirect(url_for("login"))
 
-@app.route("/stocks", methods=["GET", "POST"])
+
+@app.route("/stocks", methods=["GET","POST"])
 def stocks():
     """
     Renderes the page for stocks.
@@ -135,45 +141,45 @@ def stocks():
     `stocks` list consists of the all the filtered stock symbols, starting from index 1.
     (0th index is ignored to flag that filters request is received but none match the filters)
     """
+    if "user_id" not in session:
+        flash("Please login first!")
+        return render_template("login.html")
     f = getter.Filter()
     ranges = dict()
-    ranges['avg'] = f.get_range_twoHundredDayAverage()
-    ranges['vol'] = f.get_range_averageVolume()
-    print(ranges)
-    if request.method == "GET":
-        if "user_id" in session:
-            return render_template("stocks.html",plot_data='None', stocks=[], ranges=ranges, username=session["username"])
-        else:
-            flash("Please login first!")
-            return render_template("login.html")
-    else:
-        print(request.form)
-        if "filters" in request.form:
-            sort_descending = 'sortOption' in request.form and request.form['sortOption'] == 'highToLow'
-            f.range_filter_twoHundredDayAverage(
-                request.form["averagePriceMin"],
-                request.form["averagePriceMax"]
-            )
-            f.range_filter_averageVolume(
-                request.form["Vol_min"],
-                request.form["Vol_max"]
-            )
-            match request.form["sort_by"]:
-                case "Average Price":
-                    f.sort_filter_twoHundredDayAverage(not sort_descending)
-                case "Volume":
-                    f.sort_filter_averageVolume(not sort_descending)
-                case "Book value":
-                    f.sort_filter_bookValue(not sort_descending)
-            stocks = [None] + f.data.to_dict(orient="records")
-            return render_template("stocks.html",plot_data='None', stocks=stocks, ranges=ranges)
-        if "stocks" in request.form:
-            symbols = [stock for stock in request.form if request.form[stock] == "on"]
+    display_data = getter.get_category_data()
+    for category in display_data:
+        ranges[category] = f._unsafe_get_ranges(category)
 
-            saver = getter.Saver()
-            saver.get_graph_data(symbols, getter.formats[request.form['frequency']])
+    print(ranges, display_data)
+    return render_template("stocks.html", ranges=ranges, display_data=display_data,username=session["username"])
 
-            return render_template("stocks.html",plot_data=saver.get_graph(), stocks=[], ranges=ranges)
+
+@app.route("/stocks_get_graph", methods=["POST"])
+def get_stocks_graph():
+    print(request.form)
+    symbols = [stock for stock in request.form if request.form[stock] == "on"]
+
+    saver = getter.Saver()
+    saver.get_graph_data(symbols, getter.formats[request.form["frequency"]])
+
+    print("Done making graph!")
+    return saver.get_graph()
+
+
+@app.route("/stocks_get_list", methods=["POST"])
+def get_stocks_list():
+    print(request.form)
+    f = getter.Filter()
+    categories = getter.get_category_data()
+    sort_descending = (
+        "sortOption" in request.form and request.form["sortOption"] == "highToLow"
+    )
+    for category in categories:
+        f._unsafe_range_filter(category,request.form[category + "Min"],request.form[category + "Max"])
+    f._unsafe_sort_filter(request.form["sort_by"],not sort_descending)
+    stocks = [None] + f.data.to_dict(orient="records")
+    return render_template("stocks_layout.html", stocks=stocks)
+
 @app.route("/profile")
 def profile():
     return render_template("profile.html", username=session["username"])

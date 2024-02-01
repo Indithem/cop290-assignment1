@@ -1,0 +1,39 @@
+
+{%if stocks%}
+  {%if stocks|length == 1%}
+    <h1 style="color: rgb(255, 45, 45);">No stocks match the filters!</h1>
+  {%else%}
+  <h1 style="color: rgb(128, 0, 75);">Select stocks</h1>
+    <form id="stocks-form" method="POST">
+      <label for="frequency">Choose a frequency:</label>
+      <select name="frequency" id="frequency">
+        <option value="daily">daily</option>
+        <option value="weekly">weekly</option>
+        <option value="monthly">monthly</option>
+        <option value="quarterly">quarterly</option>
+        <option value="yearly">yearly</option>
+      </select>
+      <button type="submit" name="stocks" class="custom-button">Get graph!</button><br>
+      <input type="text" id="search" placeholder="Search options...">
+      <button type="button" id="toggle-btn">Selected None</button>
+      <br>
+      <div class="scrollbox">
+        {%for stock in stocks[1:]%}    
+        <span class="custom-checkbox"><label><input type="checkbox" name="{{stock['symbol']}}"> {{stock['longName']}}</label></span>
+        {%endfor%}  
+      </div>
+    </form>
+
+<style>
+  .scrollbox {
+    height: 150px;
+    overflow: auto;
+    border: 1px solid #ccc;
+    padding: 5px;
+  }
+  .scrollbox span {
+    display: block;
+  }
+</style>
+{%endif%}
+{%endif%}
