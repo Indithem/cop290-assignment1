@@ -112,7 +112,8 @@ def dashboard():
     if "user_id" in session:
         return render_template("welcome.html", username=session["username"])
     else:
-        return redirect(url_for("index"))
+        flash("Please login first!")
+        return redirect(url_for("login"))
 
 
 @app.route("/logout")
@@ -141,7 +142,7 @@ def stocks():
     print(ranges)
     if request.method == "GET":
         if "user_id" in session:
-            return render_template("stocks.html",plot_data='None', stocks=[], ranges=ranges)
+            return render_template("stocks.html",plot_data='None', stocks=[], ranges=ranges, username=session["username"])
         else:
             flash("Please login first!")
             return render_template("login.html")

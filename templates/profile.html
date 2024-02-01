@@ -1,21 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='profile.css') }}">
-</head>
-<body>
+    <title>{% block title %}{% endblock %}</title>
+  </head>
+  <body>
     
-    <div class="dropdown">
-        <button>{{username[0]}}</button>
-        <div class="dropdown-options">
+    <section>
+      <header>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='profile.css') }}">
+      </header>
+    <div class="profile-dropdown">
+        <button class="profile-button">{{username[0]}}</button>
+        <div class="profile-dropdown-options">
           <a href="/dashboard">Dashboard</a>
           <a href="/">Home</a>
           <a href="/stocks">Stocks</a>
           <a href="/logout">Logout</a>
         </div>
       </div>
+    </section>
+    <section>
+    <header>
+      {% block head %}{% endblock %}
+    </header>
+    <body>
+      {% block body %}{% endblock %}
+    </body>
+  </section>
+  
 </body>
 </html>
