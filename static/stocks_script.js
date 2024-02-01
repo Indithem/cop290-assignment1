@@ -1,75 +1,33 @@
 
   document.addEventListener('DOMContentLoaded', function () {
-    var avgPriceCheckbox = document.getElementById("avgPriceCheckbox");
-    var avgPriceMinLabel = document.getElementById("averagePriceMinLabel");
-    var avgPriceMaxLabel = document.getElementById("averagePriceMaxLabel");
-    var Volumecheckbox = document.getElementById("Volumecheckbox");
-    var avgPriceSlider = document.getElementById("avgPriceSlider");
-    var Volumeslider = document.getElementById("Volumeslider");
-    var noneOptionCheckbox = document.getElementById("noneOptionCheckbox");
     var sortCheckbox = document.getElementById("sortCheckbox");
     var sortOptions = document.getElementById("sortOptions");
-    var sortButtons = document.getElementById("sortButtons");
-    var Vol_minLabel = document.getElementById("Volumeminlabel"); // Corrected ID
-    var Volumemaxlabel = document.getElementById("Volumemaxlabel"); // Corrected ID
- 
-    avgPriceCheckbox.addEventListener("change", function() {
-      if (avgPriceCheckbox.checked) {
-          avgPriceSlider.style.display = "block";
-          avgPriceMinLabel.style.display = "inline-block";
-          avgPriceMaxLabel.style.display = "inline-block";
-      } else {
-          avgPriceSlider.style.display = "none";
-          avgPriceMinLabel.style.display = "none";
-          avgPriceMaxLabel.style.display = "none";
-      }
-    });
-  
-    Volumecheckbox.addEventListener("change", function() {
-      if (Volumecheckbox.checked) {
-        Volumeslider.style.display = "block";
-        Vol_minLabel.style.display = "inline-block";
-        Volumemaxlabel.style.display = "inline-block";
-      } else {
-        Volumeslider.style.display = "none";
-        Vol_minLabel.style.display = "none";
-        Volumemaxlabel.style.display = "none";
-      }
-    });
-  
-    sortCheckbox.addEventListener("change", function() {
-      if (sortCheckbox.checked) {
+    var sortButton = document.getElementById("highToLow");
+    var resetButton = document.getElementById("reset");
+    
+    sortCheckbox.checked = false;
+    sortCheckbox.addEventListener('change', function() {
+      if (this.checked) {
         sortOptions.style.display = "block";
-        sortButtons.style.display = "block";
       } else {
         sortOptions.style.display = "none";
-        sortButtons.style.display = "none";
+        sortButton.checked = false;
       }
     });
-  
-    noneOptionCheckbox.addEventListener("change", function() {
-      if (noneOptionCheckbox.checked) {
+
+    resetButton.addEventListener('click',function(event) {
+        sortButton.checked = false;
+        sortOptions.style.display = "none";
         sortCheckbox.checked = false;
-        avgPriceCheckbox.checked = false;
-        Volumecheckbox.checked = false;
-        lowToHigh.checked = false;
-        highToLow.checked = false;
-        avgPriceSlider.style.display = "none";
-        Volumeslider.style.display = "none";
-        sortButtons.style.display = "none";
-        Volumemaxlabel.style.display ="none";
-        Vol_minLabel.style.display ="none";
-        avgPriceMinLabel.style.display = "none";
-        avgPriceMaxLabel.style.display = "none";
-      }
+        });
     });
     
-  });
   
 function make_slider(name,min_val,max_val, min_name, max_name){
   var slider = document.getElementById(name);
   var minInput = document.getElementById(min_name);
   var maxInput = document.getElementById(max_name);
+  var resetButton = document.getElementById("reset");
 
   noUiSlider.create(slider, {
     start: [min_val, max_val],
@@ -88,6 +46,19 @@ function make_slider(name,min_val,max_val, min_name, max_name){
     minInput.value = value[0];
     maxInput.value = value[1];
   });
+
+  minInput.addEventListener('change', function () {
+    slider.noUiSlider.set([this.value, null]);
+  });
+
+  maxInput.addEventListener('change', function () {
+      slider.noUiSlider.set([null, this.value]);
+  });
+
+  resetButton.addEventListener('click',()=>{
+    slider.noUiSlider.reset();
+  })
+
   }
 
 $(document).ready(function() {
@@ -114,7 +85,7 @@ $(document).ready(function() {
       } else {
         $('#stocks span').show();
     }});
-    
+
     $('#stocks-form').submit(function(event) {
       event.preventDefault(); 
       var formData = $(this).serialize(); 
@@ -128,10 +99,28 @@ $(document).ready(function() {
           }
       })
     });
-  }
-
-
+    var currentState = 'none';
+    $('#toggle-btn').click(function() {
+      if (currentState === 'all') {
+        $('.custom-checkbox input[type="checkbox"]').prop('checked', false);
+        $(this).text('Selected None');
+        currentState = 'none';
+      } else if (currentState === 'none') {
+        $('.custom-checkbox input[type="checkbox"]').prop('checked', true);
+        $(this).text('Selected All');
+        currentState = 'all';
+      } else {
+        $('.custom-checkbox input[type="checkbox"]').prop('checked', true);
+        $(this).text('Selected All');
+        currentState = 'all';
       }
-      );
+    });
+    
+    $('.custom-checkbox input[type="checkbox"]').change(function() {
+      currentState = 'custom';
+      $('#toggle-btn').text('Custom');
+    });
+
+  }});
   });
 });

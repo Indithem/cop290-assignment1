@@ -5,88 +5,61 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Filters</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.4/nouislider.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stocks.css') }}">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.4/nouislider.min.css" rel="stylesheet">
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="{{ url_for('static', filename='stocks_script.js') }}"></script>
 </head>
 <body>
-<div class="stocks-body">
-  <form id="filters" method="POST">
+<div class="main-styling">
+  <form id="filters" >
     <h1 style="color: rgb(128, 0, 75);">Apply Filters</h1>
-    <div id="avgPriceFilter">
-      <input type="checkbox" id="avgPriceCheckbox" name="avgPriceCheckbox"> Choose Average Price Range
-      <div id="avgPriceSlider" style="display: none;"></div>
-      <p id="averagePriceMinLabel" style="display: none;">
-          <label for="averagePriceMin" >Min Average Price:</label>
-          <input type="text2" id="averagePriceMin" name="averagePriceMin" readonly style="border:0; color:#f6931f; font-weight:bold; ">
-      </p>
-      <br>
-      <p id="averagePriceMaxLabel" style="display: none;">
-          <label for="averagePriceMax" >Max Average Price:</label>
-          <input type="text2" id="averagePriceMax" name="averagePriceMax" readonly style="border:0; color:#f6931f; font-weight:bold; ">
-      </p>
+    {% for category in display_data %}
+    Choose {{display_data[category]}} range:
+    <div id="{{category}}Slider" class="slider-div"></div>
+    <div id="slider">
+      <input step="0.01" type="number" id="{{category}}Min" name="{{category}}Min" style="border:0; color:#f6931f; font-weight:bold; ">
+      <input step="0.01" type="number" id="{{category}}Max" name="{{category}}Max" style="border:0; color:#f6931f; font-weight:bold; ">
     </div>
+    {% endfor %}
 
-    <div id="Volume">
-      <input type="checkbox" id="Volumecheckbox" name="Volumecheckbox" > Choose Volume Range
-      <div id="Volumeslider" style="display: none;"></div>
-      <p id="Volumeminlabel" style="display: none;">
-        <label for="Vol_min">Min Volume:</label>
-        <input type="text2" id="Vol_min" name="Vol_min" readonly style="border:0; color:#f6931f; font-weight:bold;">
-      </p>
-      <br>
-      <p id="Volumemaxlabel" style="display: none;">
-        <label for="Vol_max">Max Volume:</label>
-        <input  type="text2"  id="Vol_max" name="Vol_max" readonly style="border:0;  color:#f6931f; font-weight:bold;">
-      </p>
-    </div>
-
-    <div id="sortOptions">
-      <label>
-        <input type="checkbox" id="sortCheckbox" name="sortCheckbox"> Sort
-      </label>
-      <div id="sortButtons" style="display: none;">
+    <label>
+      <span class="custom-checkbox"></span><input type="checkbox" id="sortCheckbox" name="sortCheckbox" > Sort
+    </label>
+    <br>
+    <div id="sortOptions", style="display: none;">
         <label>
           <input type="radio" id="lowToHigh" name="sortOption" value="lowToHigh"> Low to High
         </label>
         <label>
           <input type="radio" id="highToLow" name="sortOption" value="highToLow"> High to Low
-        </label>
-      </div>
+        </label><br>
+        <label for="sort_by">Sort by:</label>
+        <select name="sort_by" id="sort_by">
+        {% for category in display_data %}
+          <option value="{{category}}">{{display_data[category]}}</option>
+        {% endfor %}
+        </select>
     </div>
-
-
-    <label for="sort_by">Sort by:</label>
-    <select name="sort_by" id="sort_by">
-      <option value="Average Price">Average Price</option>
-      <option value="Volume">Volume</option>
-      <option value="Book value">Book value</option>
-    </select>
-    <br><br>
-
-    <div id="noneOption">
-      <label>
-          <input type="checkbox" name="noneOption" id="noneOptionCheckbox" value="none"> None
-      </label>
-  
-    </div>
-      <button type="submit" name="filters" class="logout-button">Proceed</button>
+    <button type="button" id="reset">Reset</button>
+    <br>
+      <button type="submit" name="filters" class="custom-button">Proceed</button>
      
-    <a href="/logout" class="logout-button">logout</a>
+    
   </form>
+  
+  <div id="stocks" class="stocks-div"></div>
+  
+  <div id="plotlyDiv" class="graph"></div>
+  
 </div> 
-
-<div id="stocks"></div>
-
-<div id="plotlyDiv"></div>
-
 <script>
   document.addEventListener('DOMContentLoaded',function(){
-    make_slider("avgPriceSlider", {{ranges['avg'][0]}}, {{ranges['avg'][1]}}, "averagePriceMin", "averagePriceMax");
-    make_slider("Volumeslider", {{ranges['vol'][0]}}, {{ranges['vol'][1]}}, "Vol_min", "Vol_max"); 
-  })
+    {% for category in display_data %}
+    make_slider("{{category}}Slider", {{ranges[category][0]}}, {{ranges[category][1]}}, "{{category}}Min", "{{category}}Max");
+    {% endfor %}
+     })
 
 </script>
 

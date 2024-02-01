@@ -1,0 +1,88 @@
+/* style.css */
+body {
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(skyblue, lightgreen);
+}
+
+button {
+  border: none;
+  background-color: #007bff;
+  font-size: medium;
+  border-radius: 5px;
+
+}
+
+button:active {
+  background-color: #0069d9;
+}
+
+.custom-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #dc3545;
+  color: whitesmoke;
+  font-size: large;
+  border-radius: 5px;
+  text-decoration: none;
+  /* Adjust button position */
+  margin-top: 20px; /* Move the button down */
+  margin-right: 20px; /* Move the button right */
+}
+
+.custom-button:hover {
+  background-color: #c82333;
+}
+
+.custom-button:active {
+  background-color: #bd2130;
+}
+
+
+
+#slider {
+  display: flex;
+  align-items: center;
+}
+
+#slider input[type="number"] {
+  border: 0;
+  color: #f6931f;
+  font-weight: bold;
+  width: 50%;
+  margin-right: 10px; 
+}
+
+.slider-div {
+  display: flex;
+  flex:1;
+  width: 80%;
+  margin-left: 10%;
+}
+
+
+.main-styling {
+  display: grid;
+  grid-template-rows: 1fr 5fr;
+  grid-template-columns: 1fr 3fr;
+  grid-template-areas: 
+  "filters graph"
+  "stocks graph";
+  height: 100vh;
+}
+
+.stocks-div{
+  height: 100%;
+  grid-area: stocks;
+  #stocks-form{
+    height: 100%;
+  }
+}
+
+#filters{
+  grid-area: filters;
+}
+
+.graph{
+  grid-area: graph;
+}

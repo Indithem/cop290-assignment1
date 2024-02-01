@@ -56,5 +56,11 @@
         "averageVolume",
         "bookValue",
         "longName"
-    ]
+    ],
+
+    "displayName":{
+        "twoHundredDayAverage":"average price",
+        "averageVolume":"volume",
+        "bookValue":"book value"
+    }
 }
