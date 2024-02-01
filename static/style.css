@@ -34,6 +34,13 @@ input[type="text"], input[type="password"] {
     border-radius: 5px;
     box-sizing: border-box;
 }
+input[type="email"]{
+    width: 100%;
+    padding: 10px;
+    border: 1px solid black;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
 input[type="submit"]{
     width: 90%;
     padding: 90px;
@@ -43,6 +50,7 @@ input[type="submit"]{
     font-size: 20px;
     
 }
+
 
 button {
     width: 100%;
@@ -66,13 +74,21 @@ button {
 .fa-user{
     color: black;
     margin-left: -20px;
-    margin-top: -5px;
+    margin-top: -3px;
+   
 }
 .fa-lock{
     color: black;
     margin-left: -20px;
     margin-top: -5px;
 }
+.fa-envelope{
+    color: black;
+    margin-left: -23px;
+    margin-top: -3px;
+}
+
+
 .home-body {
     background-image: url(/static/background.png);
     background-repeat: no-repeat;

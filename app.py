@@ -23,7 +23,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
-
+    email = db.Column(db.String(100), nullable=False) 
 
 # Password Validator
 class PasswordValidator(FlaskForm):
@@ -60,7 +60,9 @@ def index():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
+        # print(request.form)
         username = request.form["username"]
+        email = request.form["email"] 
         password_validator = PasswordValidator(request.form)
         if not password_validator.validate():
             for error in password_validator.errors.values():
@@ -73,7 +75,10 @@ def register():
         if user :
             flash("Username already exists") 
             return redirect(url_for("register"))
-        new_user = User(username=username, password_hash=hashed_password)
+
+
+     # Create a new user object with username, email, and hashed password
+        new_user = User(username=username, email=email, password_hash=hashed_password)
         db.session.add(new_user)
         db.session.commit()
 
@@ -171,5 +176,33 @@ def stocks():
 @app.route("/profile")
 def profile():
     return render_template("profile.html", username=session["username"])
+@app.route("/forgot_password",methods=["GET","POST"])
+def forgot_password():
+    if request.method == "POST":
+        username = request.form["username"]
+        email = request.form["email"] 
+        password_validator = PasswordValidator(request.form)
+        if not password_validator.validate():
+            for error in password_validator.errors.values():
+                flash(error[0])
+            return redirect(url_for("forgot_password"))
+        password = request.form["password"]
+        hashed_password = generate_password_hash(password, method="pbkdf2:sha256")
+        user = User.query.filter_by(username=username).first()
+        if user :
+            if email==user.email:
+                user.password_hash=hashed_password
+                db.session.commit()
+                flash("Password Updated,Please login with new password.")
+                return redirect(url_for("login"))
+            else:
+                flash("Email doesn't match with the registered email") 
+                return redirect(url_for("forgot_password"))
+        else:
+            flash("Invalid Username") 
+            return redirect(url_for("forgot_password"))
+
+
+    return render_template("forgot_password.html")
 if __name__ == "__main__":
     app.run(debug=True)

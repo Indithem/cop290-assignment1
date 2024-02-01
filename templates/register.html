@@ -10,10 +10,12 @@
 <body>
     <div class="form-container">
         <h2>Register</h2>
-        <i class="fa-solid fa-user"></i>
+        
         <form action="/register" method="post">
+            
             <div class="form-group">
-                <input type="text" name="username" placeholder="Username" required>
+                <i class="fa-solid fa-user"></i> <label for="username"> Username</label>
+                <input type="text" name="username" id="username" placeholder="Username" required>
             </div>
             <div class="form-group">
                 <i class="fa-solid fa-lock"></i>
@@ -23,6 +25,15 @@
                     pattern="(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}"
                     required>
                 <input type="checkbox" id="showPassword"> Show Password
+            </div>
+            <div class="form-group">
+                <i class="fa-solid fa-lock"></i>
+                <label for="confirmPass">Confirm Password:</label>
+                <input type="password" name="confirm_password" id="confirmPass" placeholder="Confirm Password" required>
+            </div>
+            <div class="form-group">
+                <i class="fa-solid fa-envelope"></i>
+                <input type="email" name="email" placeholder="ex:Rahul@18" required>
             </div>
             {% with messages= get_flashed_messages() %}
             {% if messages %}
@@ -39,17 +50,40 @@
         </form>
         <p>Already have an account? <a href="/login">Login here</a></p>
     </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const passwordField = document.getElementById('pass');
+            const confirmPasswordField = document.getElementById('confirmPass');
             const showPasswordCheckbox = document.getElementById('showPassword');
-
+    
             showPasswordCheckbox.addEventListener('change', function () {
                 passwordField.type = showPasswordCheckbox.checked ? 'text' : 'password';
+                
+            });
+    
+            // Add event listener to the form submission
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function (event) {
+                // Prevent form submission
+                event.preventDefault();
+    
+                // Check if passwords match
+                if (passwordField.value !== confirmPasswordField.value) {
+                    // Show alert if passwords don't match
+                    alert('Passwords do not match. Please try again.');
+                    // Clear password fields
+                    passwordField.value = '';
+                    confirmPasswordField.value = '';
+                    // Set focus on the password field
+                    passwordField.focus();
+                } else {
+                    // If passwords match, submit the form
+                    form.submit();
+                }
             });
         });
     </script>
+    
 </body>
 
 </html>
