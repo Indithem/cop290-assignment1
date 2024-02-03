@@ -15,11 +15,14 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 import pytz
 import janitor
+import progressbar
 
 DATA_FOLDER = "instance/stocks_data"
 FORMATS_FILE = "stocks_data_formats.json"
 
 session = requests_cache.CachedSession(f"{DATA_FOLDER}/yfinance.cache")
+with open(FORMATS_FILE, "r") as f:
+    formats_data = json.load(f)
 
 
 class Downloader:
@@ -172,7 +175,7 @@ class Saver:
     def __init__(self):
         pass
 
-    def get_graph(self, symbols=None, data: list[pandas.DataFrame] = None):
+    def get_graph(self, symbols=None, data: list[pandas.DataFrame] = None, show=False):
         """
         Returns a plotly json corresponding to the data
         """
@@ -203,6 +206,9 @@ class Saver:
             ),
             margin=dict(l=40, r=40, t=40, b=40),
         )
+        if show:
+            fig.show()
+
         return fig.to_json()
 
     def get_graph_data(self, symbols, format: formats) -> list[pandas.DataFrame]:
@@ -233,17 +239,12 @@ class Saver:
         """
         downloads or loads the filters' data whichever is fresh
         """
-        if os.path.exists(f"{DATA_FOLDER}/filters.csv"):
-            if datetime.today() - datetime.fromtimestamp(
-                os.path.getmtime(f"{DATA_FOLDER}/filters.csv")
-            ) < timedelta(days=1):
-                return pandas.read_csv(f"{DATA_FOLDER}/filters.csv")
 
-        with open(FORMATS_FILE, "r") as f:
-            data = json.load(f)
+        data = formats_data.copy()
         symbols = data["symbols"]
         categories = data["categories"]
         df = []
+
         for symbol in symbols:
             m = yfc.Ticker(symbol).info
             d = {"symbol": symbol}
@@ -251,13 +252,11 @@ class Saver:
                 d[category] = m[category]
             df.append(d)
         df = pandas.DataFrame(df)
-        df.to_csv(f"{DATA_FOLDER}/filters.csv", index=False)
         return df
 
+
 def get_category_data(file=FORMATS_FILE):
-    with open(file, "r") as f:
-        data = json.load(f)
-    return data["displayName"]
+    return formats_data.copy()
 
 
 class Filter:
@@ -301,7 +300,7 @@ class Filter:
 
     def get_range_bookValue(self):
         return self.__get_ranges("bookValue")
-    
+
     def get_range_averageVolume(self):
         return self.__get_ranges("averageVolume")
 
@@ -316,7 +315,7 @@ class Filter:
 
     def _unsafe_sort_filter(self, category, ascending=True):
         return self.__sort_filter(category, ascending)
-    
+
     def _unsafe_range_filter(self, category, min, max):
         return self.__range_filter(category, min, max)
 
@@ -331,9 +330,7 @@ def main():
             Format = formats[sys.argv[2]]
             symbols = sys.argv[3:]
             data = s.get_graph_data(symbols, Format)
-            s.get_graph(symbols, data)
-        case "filters":
-            s.save_filter_data()
+            s.get_graph(symbols, data, show=True)
         case "download":
             if os.path.exists(DATA_FOLDER):
                 for filename in os.listdir(DATA_FOLDER):
@@ -345,30 +342,40 @@ def main():
                             shutil.rmtree(file_path)
                     except Exception as e:
                         print("Failed to delete %s. Reason: %s" % (file_path, e))
+                        return 104
                 os.rmdir(DATA_FOLDER)
             s = Saver()
         case "test":
-            test_stock_data_formats_json()
+            return test_stock_data_formats_json()
         case _:
             print("Wrong option", sys.argv[1])
+            return 2
+    return 0
 
 
 def test_stock_data_formats_json():
-    import json
+    print("running tests")
 
-    with open(FORMATS_FILE, "r") as f:
-        data = json.load(f)
+    faulties = []
+    data = formats_data.copy()
 
-    for stock in data["symbols"]:
-        m = yfc.Ticker(stock).info
-        for category in data["categories"]:
+    with progressbar.ProgressBar(max_value=len(data["symbols"])) as bar:   
+        for index,stock in enumerate(data["symbols"]):
             try:
-                m[category]
+                m = yfc.Ticker(stock).info
+                for category in data["categories"]:
+                        m[category]
             except Exception as e:
-                print(stock, category, e)
+                faulties.append(stock)
                 continue
+            bar.update(index+1)
 
-    print("All stocks have all categories!")
+    if not faulties:
+        print("All stocks have all categories!")
+        return 0
+    else:
+        print(json.dumps(faulties))
+        return 100
 
 
 def test():
@@ -384,4 +391,4 @@ def test():
 
 if __name__ == "__main__":
     # test_stock_data_formats_json()
-    main()
+    exit(main())

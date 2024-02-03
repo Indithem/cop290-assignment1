@@ -18,3 +18,4 @@ plotly
 pyjanitor
 datetime
 python-dateutil
+progressbar2

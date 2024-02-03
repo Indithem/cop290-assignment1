@@ -7,6 +7,7 @@ from wtforms import StringField, PasswordField, validators
 from wtforms.validators import Length
 
 import getter
+import threading
 
 app = Flask(__name__)
 app.secret_key = "your_secret_key"  # Replace with your actual secret key
@@ -228,6 +229,15 @@ def change_password():
         return redirect(url_for("login"))
 
     return render_template("change_password.html")
+
+def test_stock_data_formats_json():
+    with app.app_context():
+        result = getter.test_stock_data_formats_json()
+        if result:
+            exit()
+
+updtate_thread = threading.Thread(target=test_stock_data_formats_json)
+updtate_thread.start()
 
 if __name__ == "__main__":
     app.run(debug=True)
