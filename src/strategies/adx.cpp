@@ -2,15 +2,15 @@
 #include "base.h"
 
 
-class adx_strategy: public strategy{
+class AdxStrategy: public Strategy{
 private:
     unsigned int x,n;
     double adx ;
 public:
-   adx_strategy(unsigned int x,unsigned int n , double adx): x(x),n(n),adx(adx){
+   AdxStrategy(unsigned int x,unsigned int n , double adx): Strategy(x),n(n),adx(adx){
 
    }
-    ~adx_strategy(){}
+    ~AdxStrategy(){}
 
     Action get(double price){
         

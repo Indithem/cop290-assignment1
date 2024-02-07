@@ -2,16 +2,16 @@
 #include "base.h"
 
 
-class dma_strategy: public strategy{
+class DMAStrategy: public Strategy{
 private:
     unsigned int x,n;
     double p;
     // p = standard deviation threshold
 public:
-   dma_strategy(unsigned int n, unsigned int x, double p): x(x),n(n),p(p){
+   DMAStrategy(unsigned int n, unsigned int x, double p): Strategy(x),n(n),p(p){
 
    }
-    ~dma_strategy(){}
+    ~DMAStrategy(){}
 
     Action get(double price){
         

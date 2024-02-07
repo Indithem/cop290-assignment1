@@ -2,15 +2,15 @@
 #include "base.h"
 
 
-class macd_strategy: public strategy{
+class MACDStrategy: public Strategy{
 private:
     unsigned int x;
 
 public:
-   macd_strategy(unsigned int x): x(x){
+   MACDStrategy(unsigned int x): Strategy(x){
 
    }
-    ~macd_strategy(){}
+    ~MACDStrategy(){}
 
     Action get(double price){
         

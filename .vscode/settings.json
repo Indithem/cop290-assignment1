@@ -1,0 +1,17 @@
+{
+    "files.associations": {
+        "vector": "cpp",
+        "string": "cpp",
+        "format": "cpp",
+        "fstream": "cpp",
+        "any": "cpp",
+        "expected": "cpp",
+        "optional": "cpp",
+        "variant": "cpp",
+        "*.tcc": "cpp",
+        "memory": "cpp",
+        "future": "cpp",
+        "functional": "cpp",
+        "stdexcept": "cpp"
+    }
+}

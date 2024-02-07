@@ -1,17 +1,16 @@
 #include <vector>
 #include "base.h"
-using namespace std;
 
-class basic_strategy: public strategy{
+class BasicStrategy: public Strategy{
 private:
-    unsigned int x,n;
+    unsigned int n;
     double prev_price;
     bool first_day=true;
     unsigned int count=0;
     
 public:
-   basic_strategy(unsigned int x, unsigned int n): x(x),n(n){}
-    ~basic_strategy(){}
+   BasicStrategy(unsigned int x, unsigned int n): Strategy(x),n(n){}
+    ~BasicStrategy(){}
 
     Action get(double price){
 
@@ -21,12 +20,12 @@ public:
         }
         else{
             if (price>prev_price){
-                if (count>=0 && count<x){
+                if (count>=0 && count<n){
                     count++;
                     prev_price=price;
                     return HOLD;
                 }
-                else if(count>=x){
+                else if(count>=n){
                     return BUY;
                 }
                 else {
@@ -40,12 +39,12 @@ public:
                 return HOLD;
             }
             else{
-                if (count<=0 && count > -x){
+                if (count<=0 && count > -n){
                     count--;
                     prev_price=price;
                     return HOLD;
                 }
-                else if(count<= -x){
+                else if(count<= -n){
                     return SELL;
                 }
                 else {
@@ -55,5 +54,6 @@ public:
                 }
             }
         }    
+        return HOLD;
     }
 };

@@ -27,29 +27,23 @@ class processor:
     BENCHMARK_REPEATS = 100
     REQUIRED_COLUMNS = [
         "DATE",
-        "OPEN",
         "CLOSE",
-        "HIGH",
-        "LOW",
-        "LTP",
-        "VOLUME",
-        "VALUE",
-        "NO OF TRADES",
     ]
 
-    def __init__(self, SYMBOL: str, YEARS: int) -> None:
+    def __init__(self, SYMBOL: str, start_date:date, end_date:date) -> None:
         self.SYMBOL = SYMBOL
-        self.YEARS = YEARS
+        self.start_date = start_date
+        self.end_date = end_date
         self.download_data()
 
     def download_data(self) -> pandas.DataFrame:
         try:
             df: pandas.DataFrame = stock_df(
                 symbol=self.SYMBOL,
-                from_date=date.today() - relativedelta(years=self.YEARS),
-                to_date=date.today(),
+                from_date=self.start_date,
+                to_date=self.end_date,
             )
-            df = df[self.REQUIRED_COLUMNS]
+            df = df[self.REQUIRED_COLUMNS].sort_values(by="DATE")
             self.data: pandas.DataFrame = df
             return df
         except Exception as e:
@@ -184,13 +178,15 @@ def make_graph(benchmark_results: list[(str, float, float)]) -> plt.Figure:
 
 def main():
     """
-    Arguments should be given as Symbol, Year
+    Arguments should be given as Symbol, start_date, end_date
     """
-    if len(sys.argv) > 3:
-        processor.BENCHMARK_REPEATS = int(sys.argv[3])
-    p = processor(sys.argv[1], int(sys.argv[2]))
-    graph = make_graph(p.benchmark())
-    graph.savefig(f"{p.SYMBOL}.png", dpi=400)
+    if len(sys.argv) != 4:
+        print("Usage: python data_processor.py <SYMBOL> <start_date> <end_date>")
+        sys.exit(1)
+    start_date = datetime.datetime.strptime(sys.argv[2], "%d/%m/%Y").date()
+    end_date = datetime.datetime.strptime(sys.argv[3], "%d/%m/%Y").date()
+    p = processor(sys.argv[1], start_date, end_date)
+    p.write_to_csv()
 
 
 if __name__ == "__main__":

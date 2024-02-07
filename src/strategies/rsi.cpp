@@ -2,15 +2,15 @@
 #include "base.h"
 
 
-class rsi_strategy: public strategy{
+class RSIStrategy: public Strategy{
 private:
-    unsigned int x,n;
+    unsigned int n;
     double oversold , overbought;
 public:
-   rsi_strategy(unsigned int x,unsigned int n , double oversold,double overbought): x(x),n(n),oversold(oversold),overbought(overbought){
+   RSIStrategy(unsigned int x,unsigned int n , double oversold,double overbought): Strategy(x),n(n),oversold(oversold),overbought(overbought){
 
    }
-    ~rsi_strategy(){}
+    ~RSIStrategy(){}
 
     Action get(double price){
         

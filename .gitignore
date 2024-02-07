@@ -1,5 +1,6 @@
 .venv
-nifty_list.csv
+*.csv
 __pycache__
 /*.png
-.vscode
+main.exe
+a.out

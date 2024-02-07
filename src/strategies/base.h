@@ -1,8 +1,10 @@
+#pragma once
+#include "actions.h"
 
-#include <actions.h>
-
-class strategy{
+class Strategy{
 
 public:
-   virtual Action get(double price);
+   unsigned int x;
+   Strategy(unsigned int x): x(x){}
+   virtual Action get(double price)=0;
 };
