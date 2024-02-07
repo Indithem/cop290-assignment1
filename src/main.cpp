@@ -1,9 +1,21 @@
-#include "strategies/basic.cpp"
 #include <iostream>
 #include <string>
 #include "csv_parser.cpp"
 
-Strategy* get_args(int argc, char* argv[]){
+namespace Strategies
+{
+    #include "strategies/basic.cpp"
+    #include "strategies/rsi.cpp"
+    #include "strategies/macd.cpp"
+    #include "strategies/dma.cpp"
+    #include "strategies/dma_2.cpp"
+    #include "strategies/adx.cpp"
+
+} // namespace Strategies
+
+
+Strategies::Strategy* get_args(int argc, char* argv[]){
+    /*Arguments will be <STRATEGY> ...*/
     using namespace std;
 
     if (argc < 2){
@@ -11,7 +23,7 @@ Strategy* get_args(int argc, char* argv[]){
     }
     
     string strategy_str = argv[1];
-    Strategy* strat;
+    Strategies::Strategy* strat;
     if (strategy_str == "BASIC"){
         // The arguments should be n x
         if (argc < 4){
@@ -24,7 +36,7 @@ Strategy* get_args(int argc, char* argv[]){
         } catch (exception& e){
             throw invalid_argument("Arguments for BASIC strategy must be integers");
         }
-        strat = new BasicStrategy(n, x);
+        strat = new Strategies::BasicStrategy{x=x,n=n};
 
     } 
     else if (false){} // Add more strategies here
@@ -36,9 +48,8 @@ Strategy* get_args(int argc, char* argv[]){
 }
 
 int main(int argc, char* argv[]){
-    /*Arguments will be <STRATEGY> ...*/
     using namespace std;
-    Strategy* strat;
+    Strategies::Strategy* strat;
     try{
         strat = get_args(argc, argv);
     } catch (exception& e){
@@ -59,22 +70,26 @@ int main(int argc, char* argv[]){
     for (vector<string> line = historical_data.get_next_line(); line.size() > 0; line = historical_data.get_next_line()){
         price = stod(line[1]);
         date = line[0];
-        Action action =  strat->get(price);
+        Strategies::Action action =  strat->get(price);
         switch (action)
         {
-        case BUY:
-            statistics.write_line(vector<string>{date, "BUY","1",line[1]});
-            cash += price;
-            position++;
+        case Strategies::BUY:
+            if(position < strat->x){
+                statistics.write_line(vector<string>{date, "BUY","1",line[1]});
+                cash -= price;
+                position++;
+            }
             break;
         
-        case SELL:
-            statistics.write_line(vector<string>{date, "SELL","1",line[1]});
-            cash -= price;
-            position--;
+        case Strategies::SELL:
+            if(position > -strat->x){
+                statistics.write_line(vector<string>{date, "SELL","1",line[1]});
+                cash += price;
+                position--;
+            }
             break;
 
-        case HOLD:
+        case Strategies::HOLD:
             break;
         }
         cashflow.write_line(vector<string>{date, to_string(cash)});
@@ -85,9 +100,11 @@ int main(int argc, char* argv[]){
         cash += price*position;
     } else if (position < 0){
         statistics.write_line(vector<string>{date, "BUY",to_string(-position),to_string(price)});
-        cash -= price*position;
+        cash += price*position; // position is negative
     }
-    cashflow.write_line(vector<string>{date, to_string(cash)});
+    if(position)
+        {cashflow.write_line(vector<string>{date, to_string(cash)});}
 
+    cout << "Final cash: " << cash << endl;
     delete strat;
 }

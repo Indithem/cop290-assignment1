@@ -6,7 +6,7 @@ symbol?=BPCL
 strategy?=BASIC
 start_date?=01/01/2021
 end_date?=31/12/2021
-
+x?=4
 
 .PHONY: all
 all: $(environment_name)/pyvenv.cfg main.exe
@@ -18,13 +18,13 @@ all: $(environment_name)/pyvenv.cfg main.exe
 .PHONY: pip_venv
 pip_venv: $(environment_name)/pyvenv.cfg
 	
-main.exe: src/
+main.exe: $(shell find src -type f)
 	g++ -std=c++11 -o $@ src/main.cpp 
 
 $(environment_name)/pyvenv.cfg: pip_requirements.txt
 # 	works for apt in Debian of gradescope servers, dont know about other OS's
-	$(python_executable) -m venv $(environment_name) --quiet || python3 -m venv $(environment_name) --without-pip --system-site-packages --quiet
-	$(py) -m pip install -r $<
+	$(python_executable) -m venv $(environment_name) || python3 -m venv $(environment_name) --without-pip --system-site-packages
+	$(py) -m pip install -r $< --quiet
 
 .PHONY: clean
 clean:
@@ -33,3 +33,4 @@ clean:
 	@rm -rf __pycache__
 	@rm -f $(foreach ff, $(cleanup_formats), *$(ff))
 	@find . -name '*.txt' ! -name 'pip_requirements.txt' -exec rm {} +
+	@rm -f main.exe

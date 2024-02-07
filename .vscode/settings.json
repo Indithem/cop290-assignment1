@@ -13,5 +13,6 @@
         "future": "cpp",
         "functional": "cpp",
         "stdexcept": "cpp"
-    }
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }
