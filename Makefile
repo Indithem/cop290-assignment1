@@ -1,9 +1,8 @@
 python_executable=python3
 environment_name=.venv
 py=$(environment_name)/bin/python3
-cleanup_formats=.csv .json .bin .xlsx .html .tex .xml .feather .parquet .orc .dta .hdf .pkl .png .bson .yaml
 symbol?=SBIN
-strategy?=DMA
+strategy?=BASIC
 start_date?=01/01/2021
 end_date?=31/12/2022
 x?=5
@@ -12,7 +11,7 @@ n?=7
 
 .PHONY: all
 all: $(environment_name)/pyvenv.cfg main.exe
-	$(py) data_processor.py $(symbol) $(start_date) $(end_date)
+	$(py) data_processor.py $(symbol) $(start_date) $(end_date) $(n)
 	@mv $(symbol).csv history.csv 
 	./main.exe $(strategy) $(n) $(x) $(p)
 	# @rm -f history.csv
@@ -34,5 +33,4 @@ clean:
 	@rm -f nifty_list.csv
 	@rm -rf __pycache__
 	@rm -f $(foreach ff, $(cleanup_formats), *$(ff))
-	@find . -name '*.txt' ! -name 'pip_requirements.txt' -exec rm {} +
-	@rm -f main.exe
+	@rm -f main.exe daily_cahflow.csv history.csv order_statistics.csv a.out final_pnl.txt

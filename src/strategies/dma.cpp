@@ -24,6 +24,7 @@ public:
         {
             avg_price+=i;      
         }
+        avg_price/=n;
         n_days.pop_front();
         n_days.push_back(price);
 

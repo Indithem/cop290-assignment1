@@ -10,6 +10,16 @@
 //} // namespace Strategies
 #define Strategies
 
+void feed_init_days(Strategy* s, CSV_reader& historical_data){
+    vector<double> prices;
+    for (vector<string> line = historical_data.get_next_line(); line.size() > 0; line = historical_data.get_next_line()){
+        prices.push_back(stod(line[1]));
+        if (prices.size() == s->n){
+            break;
+        }
+    }
+    s->init_first_n_days(prices);
+}
 
 Strategies::Strategy* get_args(int argc, char* argv[]){
     /*Arguments will be <STRATEGY> ...*/
@@ -81,6 +91,9 @@ int main(int argc, char* argv[]){
     cashflow.write_line(vector<string>{"Date", "Cashflow"});
     statistics.write_line(vector<string>{"Date", "Order Direction","quantity","price"});
     historical_data.get_next_line(); // headers
+
+    feed_init_days(strat, historical_data);
+
     for (vector<string> line = historical_data.get_next_line(); line.size() > 0; line = historical_data.get_next_line()){
         price = stod(line[1]);
         date = line[0];

@@ -11,6 +11,7 @@ import numpy as np
 import yaml
 import bson
 
+
 class processor:
     """
     Downloads data as required for the assignment.
@@ -30,13 +31,15 @@ class processor:
         "CLOSE",
     ]
 
-    def __init__(self, SYMBOL: str, start_date:date, end_date:date) -> None:
+    def __init__(
+        self, SYMBOL: str, start_date: date, end_date: date, prev_days: int = 0
+    ) -> None:
         self.SYMBOL = SYMBOL
         self.start_date = start_date
         self.end_date = end_date
-        self.download_data()
+        self.download_data(prev_days)
 
-    def download_data(self) -> pandas.DataFrame:
+    def download_data(self, prev_days: int) -> pandas.DataFrame:
         try:
             df: pandas.DataFrame = stock_df(
                 symbol=self.SYMBOL,
@@ -44,6 +47,22 @@ class processor:
                 to_date=self.end_date,
             )
             df = df[self.REQUIRED_COLUMNS].sort_values(by="DATE")
+            from_date = self.start_date - relativedelta(days=prev_days + 1)
+            to_date = self.start_date - relativedelta(days=1)
+            prev_days_df = stock_df(
+                symbol=self.SYMBOL,
+                from_date=from_date,
+                to_date=to_date,
+            )
+            while len(prev_days_df) < prev_days:
+                from_date -= relativedelta(days=1)
+                prev_days_df = stock_df(
+                    symbol=self.SYMBOL,
+                    from_date=from_date,
+                    to_date=to_date,
+                )
+            prev_days_df = prev_days_df[self.REQUIRED_COLUMNS].sort_values(by="DATE")
+            df = pandas.concat([prev_days_df, df])
             self.data: pandas.DataFrame = df
             return df
         except Exception as e:
@@ -52,7 +71,7 @@ class processor:
 
     def benchmark(self) -> list[(str, float, float)]:
         benchmark_results = list[(str, float, float)]()
-        for i,f in enumerate(dir(self)):
+        for i, f in enumerate(dir(self)):
             print(f"Progress : {i}/{len(dir(self))}% benchmarking {f}")
             if "write_to" in f and callable(getattr(self, f)):
                 splitted = f.removeprefix("write_to_").split("_")
@@ -138,6 +157,7 @@ class processor:
         with open(f"{self.SYMBOL}.bson", "wb") as f:
             f.write(bson.dumps(self.data.to_dict()))
 
+
 def make_graph(benchmark_results: list[(str, float, float)]) -> plt.Figure:
     """pretty print the benchmark results and show plot
     The benchmark results should be a list of tuples of the form (format, time, size)"""
@@ -180,12 +200,18 @@ def main():
     """
     Arguments should be given as Symbol, start_date, end_date
     """
-    if len(sys.argv) != 4:
-        print("Usage: python data_processor.py <SYMBOL> <start_date> <end_date>")
+    if len(sys.argv) < 4:
+        print(
+            "Usage: python data_processor.py <SYMBOL> <start_date> <end_date> ?<prev_days>"
+        )
         sys.exit(1)
     start_date = datetime.datetime.strptime(sys.argv[2], "%d/%m/%Y").date()
     end_date = datetime.datetime.strptime(sys.argv[3], "%d/%m/%Y").date()
-    p = processor(sys.argv[1], start_date, end_date)
+    if len(sys.argv) == 5:
+        prev_days = int(sys.argv[4])
+    else:
+        prev_days = 0
+    p = processor(sys.argv[1], start_date, end_date, prev_days)
     p.write_to_csv()
 
 
