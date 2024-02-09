@@ -7,9 +7,10 @@
       "request": "launch",
       "program": "${workspaceFolder}/a.out",
       "args": [
-        "BASIC",
+        "DMA",
+        "5",
         "3",
-        "5"
+        "2",
       ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",

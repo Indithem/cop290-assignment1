@@ -1,6 +1,7 @@
 #pragma once
 #include "actions.h"
 #include <vector>
+
 class Strategy{
 
 public:

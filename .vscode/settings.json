@@ -13,7 +13,8 @@
     "future": "cpp",
     "functional": "cpp",
     "stdexcept": "cpp",
-    "deque": "cpp"
+    "deque": "cpp",
+    "iostream": "cpp"
   },
  
   "C_Cpp_Runner.msvcBatchPath": "",
