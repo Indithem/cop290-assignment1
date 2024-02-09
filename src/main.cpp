@@ -2,16 +2,13 @@
 #include <string>
 #include "csv_parser.cpp"
 
-namespace Strategies
-{
+// namespace Strategies
+// {
     #include "strategies/basic.cpp"
-    #include "strategies/rsi.cpp"
-    #include "strategies/macd.cpp"
     #include "strategies/dma.cpp"
-    #include "strategies/dma_2.cpp"
-    #include "strategies/adx.cpp"
 
-} // namespace Strategies
+//} // namespace Strategies
+#define Strategies
 
 
 Strategies::Strategy* get_args(int argc, char* argv[]){
@@ -21,7 +18,6 @@ Strategies::Strategy* get_args(int argc, char* argv[]){
     if (argc < 2){
         throw invalid_argument("No strategy provided");
     }
-    
     string strategy_str = argv[1];
     Strategies::Strategy* strat;
     if (strategy_str == "BASIC"){
@@ -39,7 +35,25 @@ Strategies::Strategy* get_args(int argc, char* argv[]){
         strat = new Strategies::BasicStrategy{x=x,n=n};
 
     } 
-    else if (false){} // Add more strategies here
+    else if (strategy_str == "DMA"){
+        // The arguments should be n x
+        if (argc < 5){
+            throw invalid_argument("Not enough arguments for DMA strategy");
+        }
+        int n, x,p;
+        try{
+            n = stoi(argv[2]);
+            x = stoi(argv[3]);
+            p = stoi(argv[4]);
+            
+        } catch (exception& e){
+            throw invalid_argument("Arguments for DMA strategy must be integers");
+        }
+        strat = new Strategies::DMAStrategy{x=x,n=n,p=p};
+
+    } 
+    else if (false){} // Add more strategies here\
+
     else {
         throw invalid_argument("Invalid strategy");
     } 
@@ -60,7 +74,7 @@ int main(int argc, char* argv[]){
     CSV_writer cashflow("daily_cashflow.csv");
     CSV_writer statistics("order_statistics.csv");
     double cash =0;
-    int position = 0;
+    int position = 0; 
     double price;
     string date;
 
@@ -95,16 +109,11 @@ int main(int argc, char* argv[]){
         cashflow.write_line(vector<string>{date, to_string(cash)});
     }
 
-    if (position > 0){
-        statistics.write_line(vector<string>{date, "SELL",to_string(position),to_string(price)});
-        cash += price*position;
-    } else if (position < 0){
-        statistics.write_line(vector<string>{date, "BUY",to_string(-position),to_string(price)});
-        cash += price*position; // position is negative
-    }
-    if(position)
-        {cashflow.write_line(vector<string>{date, to_string(cash)});}
+    cash += position*price;
 
-    cout << "Final cash: " << cash << endl;
+        CSV_writer final_cash("final_pnl.txt");
+        final_cash.write_line(vector<string>{ to_string(cash)});
+
+
     delete strat;
 }

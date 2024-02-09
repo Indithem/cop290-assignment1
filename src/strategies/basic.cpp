@@ -3,14 +3,20 @@
 
 class BasicStrategy: public Strategy{
 private:
-    unsigned int n;
     double prev_price;
     bool first_day=true;
-    unsigned int count=0;
+    int count=0;
+
     
 public:
-   BasicStrategy(unsigned int x, unsigned int n): Strategy(x),n(n){}
+   BasicStrategy( int x,  int n): Strategy(x,n){}
     ~BasicStrategy(){}
+
+    void init_first_n_days(::std::vector<double> days){
+        for (int i=0;i<n;i++){
+            get(days[i]);
+        }
+    }
 
     Action get(double price){
 
@@ -20,12 +26,13 @@ public:
         }
         else{
             if (price>prev_price){
-                if (count>=0 && count<n){
+                if (count>=0 && count<n-1){
                     count++;
                     prev_price=price;
                     return HOLD;
                 }
-                else if(count>=n){
+                else if(count>=n-1){
+                    prev_price=price;
                     return BUY;
                 }
                 else {
@@ -39,12 +46,13 @@ public:
                 return HOLD;
             }
             else{
-                if (count<=0 && count > -n){
+                if (count<=0 && count > -(n-1)){
                     count--;
                     prev_price=price;
                     return HOLD;
                 }
-                else if(count<= -n){
+                else if(count<= -(n-1)){
+                    prev_price=price;
                     return SELL;
                 }
                 else {

@@ -2,18 +2,20 @@ python_executable=python3
 environment_name=.venv
 py=$(environment_name)/bin/python3
 cleanup_formats=.csv .json .bin .xlsx .html .tex .xml .feather .parquet .orc .dta .hdf .pkl .png .bson .yaml
-symbol?=BPCL
-strategy?=BASIC
+symbol?=SBIN
+strategy?=DMA
 start_date?=01/01/2021
-end_date?=31/12/2021
-x?=4
+end_date?=31/12/2022
+x?=5
+n?=7
+
 
 .PHONY: all
 all: $(environment_name)/pyvenv.cfg main.exe
 	$(py) data_processor.py $(symbol) $(start_date) $(end_date)
 	@mv $(symbol).csv history.csv 
-	./main.exe $(strategy) $(n) $(x) 
-	@rm -f history.csv
+	./main.exe $(strategy) $(n) $(x) $(p)
+	# @rm -f history.csv
 
 .PHONY: pip_venv
 pip_venv: $(environment_name)/pyvenv.cfg
