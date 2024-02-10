@@ -25,6 +25,8 @@ public:
         double avg_price = 0;
         double sum = 0;
         double sum_of_squares = 0;
+        n_days.pop_front();
+        n_days.push_back(price);
        
         for (auto &&i : n_days) {
             avg_price += i;
@@ -40,8 +42,7 @@ public:
         double variance = mean_of_squares - (sum / n) * (sum / n);
         double sd = sqrt(variance);
 
-        n_days.pop_front();
-        n_days.push_back(price);
+      
 
         if ((price - avg_price) >= p * sd) {
             return BUY;
