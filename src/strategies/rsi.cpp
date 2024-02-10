@@ -1,19 +1,9 @@
-#include <vector>
-#include "base.h"
+#include "lib.h"
 
+namespace Strategies{
 
-class RSIStrategy: public Strategy{
-private:
-    unsigned int n;
-    double oversold , overbought;
-public:
-   RSIStrategy(unsigned int x,unsigned int n , double oversold,double overbought): Strategy(x),n(n),oversold(oversold),overbought(overbought){
-
-   }
-    ~RSIStrategy(){}
-
-    Action get(double price){
-        
+    Action RsiStrategy::get(double price){
+        return HOLD;
     }
 
     

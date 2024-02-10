@@ -1,16 +1,11 @@
 #include <iostream>
 #include <string>
+#include <vector>
 #include "csv_parser.cpp"
+#include "strategies/lib.h"
+using namespace std;
 
-// namespace Strategies
-// {
-    #include "strategies/basic.cpp"
-    #include "strategies/dma.cpp"
-
-//} // namespace Strategies
-#define Strategies
-
-void feed_init_days(Strategy* s, CSV_reader& historical_data){
+void feed_init_days(Strategies::Strategy* s, CSV_reader& historical_data){
     vector<double> prices;
     for (vector<string> line = historical_data.get_next_line(); line.size() > 0; line = historical_data.get_next_line()){
         prices.push_back(stod(line[1]));

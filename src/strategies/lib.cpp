@@ -1,0 +1,6 @@
+#include"adx.cpp"
+#include"basic.cpp"
+#include"dma_2.cpp"
+#include"dma.cpp"
+#include"macd.cpp"
+#include"rsi.cpp"
