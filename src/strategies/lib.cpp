@@ -4,3 +4,5 @@
 #include"dma.cpp"
 #include"macd.cpp"
 #include"rsi.cpp"
+#include"revert_pairs.cpp"
+#include"pair_stop_loss.cpp"

@@ -4,13 +4,22 @@
 namespace Strategies{
 #include "actions.h"
 
-class Strategy{
+   class Strategy{
 
-public:
-   int x,n;
-   Strategy( int x, int n): x(x),n(n){}
-   virtual Action get(double price)=0;
-   virtual void init_first_n_days(std::vector<double>)=0;
-};
+   public:
+      int x,n;
+      Strategy( int x, int n): x(x),n(n){}
+      virtual Action get(double price)=0;
+      virtual void init_first_n_days(std::vector<double>)=0;
+   };
+
+   class PairsStrategy{
+   public:
+      int x,n;
+      PairsStrategy( int x, int n): x(x),n(n){}
+      virtual std::pair<Action,Action> get(double price1,double price2)=0;
+      virtual void init_first_n_days(std::vector<double>,std::vector<double>)=0;
+   };
+   
 
 }

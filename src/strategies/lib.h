@@ -73,15 +73,26 @@ namespace Strategies{
         Action get(double price);
     };
 
-    class StopLossStrategy : public Strategy {
+    class RevertingPairStrategy: public PairsStrategy{
+    private:
+        double threshold;
+        std::deque<double> n_days1;
+        std::deque<double> n_days2;
+    public:
+        RevertingPairStrategy(int x, int n, double threshold): PairsStrategy(x,n),threshold(threshold){}
+        void init_first_n_days(std::vector<double> prices_1 , std::vector<double> prices_2);
+        std::pair <Action,Action> get(double p1 , double p2);
+    };
+
+    class StopLossPairStrategy: public PairsStrategy{
     private:
         double threshold, stop_loss_threshold;
         std::deque<double> n_days1;
         std::deque<double> n_days2;
     public:
-        StopLossStrategy(int x, int n, double threshold, double stop_loss_threshold) : Strategy(x, n), threshold(threshold), stop_loss_threshold(stop_loss_threshold) {}
-        void init_first_n_days(std::vector<double> days);
-        Action get(double price);
+        StopLossPairStrategy(int x, int n, double threshold, double stop_loss_threshold): PairsStrategy(x,n),threshold(threshold),stop_loss_threshold(stop_loss_threshold){}
+        void init_first_n_days(std::vector<double> prices_1 , std::vector<double> prices_2);
+        std::pair <Action,Action> get(double p1 , double p2);
     };
 
 }

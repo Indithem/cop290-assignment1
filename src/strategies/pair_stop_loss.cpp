@@ -1,18 +1,8 @@
-#include <vector>
-#include "base.h"
-#include <deque>
+#include "lib.h"
 #include <cmath>
 using namespace std;
-class Stop_loss_Strategy: public Com_Strategy{
-private:
-    double threshold,stop_loss_threshold;
-    deque<double> n_days1;
-    deque<double> n_days2;
-
-public:
-    Stop_loss_Strategy(int x, int n, double threshold,double stop_loss_threshold): Com_Strategy(x,n),threshold(threshold),stop_loss_threshold(stop_loss_threshold){}
-    ~Stop_loss_Strategy(){}
-     void init_first_n_days(std::vector<double> prices_1 , std::vector<double> prices_2){
+namespace Strategies{
+     void StopLossPairStrategy::init_first_n_days(std::vector<double> prices_1 , std::vector<double> prices_2){
 
         for (auto &&i :prices_1)
         {
@@ -24,7 +14,7 @@ public:
         }
     }
 
-    pair <Action,Action> get(double p1 , double p2){
+    pair <Action,Action> StopLossPairStrategy::get(double p1 , double p2){
     
         double spread = p1 - p2;
         double diff = 0;
@@ -51,7 +41,7 @@ public:
         else if (z_score < -threshold){
             return make_pair(BUY,SELL);
         }
-        if stop
+        // if stop
         return make_pair(HOLD,HOLD);
     }
 

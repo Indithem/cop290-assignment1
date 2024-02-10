@@ -1,11 +1,11 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "csv_parser.cpp"
+#include "util/csv_parser.h"
 #include "strategies/lib.h"
 using namespace std;
 
-void feed_init_days(Strategies::Strategy* s, CSV_reader& historical_data){
+void feed_init_days(Strategies::Strategy* s, util::CSV_reader& historical_data){
     vector<double> prices;
     for (vector<string> line = historical_data.get_next_line(); line.size() > 0; line = historical_data.get_next_line()){
         prices.push_back(stod(line[1]));
@@ -75,9 +75,9 @@ int main(int argc, char* argv[]){
         cerr << e.what() << endl;
         return 1;
     }
-    CSV_reader historical_data("history.csv");
-    CSV_writer cashflow("daily_cashflow.csv");
-    CSV_writer statistics("order_statistics.csv");
+    util::CSV_reader historical_data("history.csv");
+    util::CSV_writer cashflow("daily_cashflow.csv");
+    util::CSV_writer statistics("order_statistics.csv");
     double cash =0;
     int position = 0; 
     double price;
@@ -119,7 +119,7 @@ int main(int argc, char* argv[]){
 
     cash += position*price;
 
-        CSV_writer final_cash("final_pnl.txt");
+        util::CSV_writer final_cash("final_pnl.txt");
         final_cash.write_line(vector<string>{ to_string(cash)});
 
 
