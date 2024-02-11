@@ -15,7 +15,7 @@ namespace Strategies{
         Action get(double price);
     };
 
-    class AdxStrategy: public Strategy{
+    class AdxStrategy: public Adx_Strategy{
     private:
         double adx ;
         double ATR;
@@ -28,9 +28,9 @@ namespace Strategies{
         std::deque<double> n_high;
         std::deque<double> n_low;
     public:
-        AdxStrategy( int x, int n , double adx_threshold): Strategy(x,n),adx_threshold(adx_threshold),count(0),prev_high(0.0),prev_low(0.0){}
+        AdxStrategy( int x, int n , double adx_threshold): Adx_Strategy(x,n),adx_threshold(adx_threshold),count(0),prev_high(0.0),prev_low(0.0){}
         void init_first_n_days(std::vector<double> high_price, std::vector<double> low_price);
-        Action get(double price);
+        Action get(double high, double low, double prev_close);
     };
 
     class DMAStrategy : public Strategy {
