@@ -13,9 +13,9 @@ namespace Strategies{
 
     Action DMAStrategy::get(double price){
 
-        double avg_price = 0;
-        double sum = 0;
-        double sum_of_squares = 0;
+        double avg_price = 0.0;
+        double sum = 0.0;
+        double sum_of_squares = 0.0;
         n_days.pop_front();
         n_days.push_back(price);
        

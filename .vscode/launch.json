@@ -10,7 +10,7 @@
         "DMA",
         "5",
         "3",
-        "2",
+        "2"
       ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
@@ -37,8 +37,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/rahul/Desktop/subtask_3/cop290-assignment1/src/strategies",
-      "program": "/home/rahul/Desktop/subtask_3/cop290-assignment1/src/strategies/build/Debug/outDebug",
+      "cwd": "/home/rahul/Downloads/temp",
+      "program": "/home/rahul/Downloads/temp/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

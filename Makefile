@@ -4,11 +4,12 @@ py=$(environment_name)/bin/$(python_executable)
 GPP?=g++
 CFLAGS?=-std=c++11
 symbol?=SBIN
-strategy?=BASIC
+strategy?=DMA
 start_date?=01/01/2021
 end_date?=31/12/2022
 x?=5
 n?=7
+p?=2
 
 
 .PHONY: all

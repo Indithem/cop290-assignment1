@@ -17,12 +17,12 @@ namespace Strategies{
     pair <Action,Action> StopLossPairStrategy::get(double p1 , double p2){
     
         double spread = p1 - p2;
-        double diff = 0;
-        double rolling_mean = 0;
-        double sum_of_squares_diff = 0;
-        double variance = 0;
-        double sd=0;
-        double z_score=0;
+        double diff = 0.0;
+        double rolling_mean = 0.0;
+        double sum_of_squares_diff = 0.0;
+        double variance = 0.0;
+        double sd=0.0;
+        double z_score=0.0;
         n_days1.pop_front();
         n_days1.push_back(p1);
         n_days2.pop_front();

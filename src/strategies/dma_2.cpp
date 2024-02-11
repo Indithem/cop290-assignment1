@@ -14,9 +14,9 @@ namespace Strategies{
 
         n_days.pop_front();
         n_days.push_back(price);
-        double ER = 0;
+        double ER = 0.0;
         double price_change = price - n_days.front();
-        double sum_abs_price_change = 0;
+        double sum_abs_price_change = 0.0;
         double prev_price = n_days.front();
 
         for (auto &&i : n_days) {
@@ -24,14 +24,21 @@ namespace Strategies{
             prev_price = i;
         }
 
-        if (sum_abs_price_change != 0) {
+        if (sum_abs_price_change != 0.0) {
             ER = abs(price_change) / sum_abs_price_change;
         }
-        double num =(2 * ER) / (1 + c2) - 1;
-        double den =(2 * ER) / (1 + c2) + 1;
-        SF = SF + c1 * ((num/den) - SF);
 
-        AMA = AMA + SF * (price - AMA);
+        if(count==0){
+            SF=0.5;
+            AMA=price;
+            count++;
+        }
+        else{
+            double num =(2 * ER) / (1 + c2) - 1;
+            double den =(2 * ER) / (1 + c2) + 1;
+            SF = SF + c1 * ((num/den) - SF);
+            AMA = AMA + SF * (price - AMA);
+        }
 
         if (price >= (1 + p / 100.0) * AMA) {
             action = BUY;
