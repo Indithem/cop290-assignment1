@@ -1,18 +1,10 @@
-#include <vector>
-#include "base.h"
-#include <deque>
+#include "lib.h"
 #include <cmath>
 using namespace std;
-class Reverting_pair_Strategy: public Com_Strategy{
-private:
-    double threshold;
-    deque<double> n_days1;
-    deque<double> n_days2;
 
-public:
-   Reverting_pair_Strategy(int x, int n, double threshold): Com_Strategy(x,n),threshold(threshold){}
-    ~Reverting_pair_Strategy(){}
-     void init_first_n_days(std::vector<double> prices_1 , std::vector<double> prices_2){
+
+namespace Strategies{
+     void RevertingPairStrategy::init_first_n_days(std::vector<double> prices_1 , std::vector<double> prices_2){
 
         for (auto &&i :prices_1)
         {
@@ -24,7 +16,7 @@ public:
         }
     }
 
-    pair <Action,Action> get(double p1 , double p2){
+    pair <Action,Action> RevertingPairStrategy::get(double p1 , double p2){
     
         double spread = p1 - p2;
         double diff = 0;

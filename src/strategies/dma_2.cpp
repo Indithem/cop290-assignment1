@@ -1,30 +1,15 @@
-#include <vector>
-#include "base.h"
-#include <deque>
+#include "lib.h"
 #include <cmath>
 using namespace std;
 
-class DMA2Strategy : public Strategy {
-private:
-    int p;
-    int max_hold_days;
-    double c1, c2;
-    deque<double> n_days;
-    double SF, AMA;
-    int days_held;
-
-public:
-    DMA2Strategy(int n, int x, int p, int max_hold_days, double c1, double c2) : Strategy(n, x), p(p), max_hold_days(max_hold_days), c1(c1), c2(c2), SF(0.5), AMA(0), days_held(0) {}
-
-    ~DMA2Strategy() {}
-
-    void init_first_n_days(std::vector<double> days) {
+namespace Strategies{
+    void DMA2Strategy::init_first_n_days(std::vector<double> days) {
         for (auto &&i : days) {
             n_days.push_back(i);
         }
     }
 
-    Action get(double price) {
+    Action DMA2Strategy::get(double price) {
         Action action = HOLD;
 
         n_days.pop_front();

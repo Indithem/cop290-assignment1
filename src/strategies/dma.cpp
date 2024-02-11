@@ -1,18 +1,9 @@
-#include <vector>
-#include "base.h"
-#include <deque>
+#include "lib.h"
 #include <cmath>
-// #include <iostream>
 using namespace std;
-class DMAStrategy: public Strategy{
-private:
-    int p;
-    deque<double> n_days;
-    // p = standard deviation threshold
-public:
-   DMAStrategy( int n,  int x,  int p): Strategy(n,x),p(p){}
-    ~DMAStrategy(){}
-    void init_first_n_days(std::vector<double> days){
+
+namespace Strategies{
+    void DMAStrategy::init_first_n_days(std::vector<double> days){
 
         for (auto &&i : days)
         {
@@ -20,7 +11,7 @@ public:
         }    
     }
 
-    Action get(double price){
+    Action DMAStrategy::get(double price){
 
         double avg_price = 0;
         double sum = 0;

@@ -1,24 +1,14 @@
-#include <vector>
-#include "base.h"
-#include <deque>    
-#include <cmath>
+#include"lib.h"
+#include<cmath>
 using namespace std;
-class RSIStrategy : public Strategy {
-private:
-    double oversold, overbought;
-    std::vector<double> prices;
-    deque<double> n_days;
-public:
-    RSIStrategy(int x,  int n, double oversold, double overbought) : Strategy(x,n),  oversold(oversold), overbought(overbought) {}
-
-    ~RSIStrategy() {}
-    void init_first_n_days(std::vector<double> days) {
+namespace Strategies{
+    void RsiStrategy::init_first_n_days(std::vector<double> days) {
         for (auto &&i : days) {
             n_days.push_back(i);
         }
     }
 
-    Action get(double price) {
+    Action RsiStrategy::get(double price) {
 
         n_days.pop_front();
         n_days.push_back(price);

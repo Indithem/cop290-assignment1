@@ -1,24 +1,13 @@
-#include <vector>
-#include "base.h"
+#include "lib.h"
 
-class BasicStrategy: public Strategy{
-private:
-    double prev_price;
-    bool first_day=true;
-    int count=0;
-
-    
-public:
-   BasicStrategy( int x,  int n): Strategy(x,n){}
-    ~BasicStrategy(){}
-
-    void init_first_n_days(::std::vector<double> days){
+namespace Strategies{
+    void BasicStrategy::init_first_n_days(std::vector<double> days){
         for (int i=0;i<n;i++){
             get(days[i]);
         }
     }
 
-    Action get(double price){
+    Action BasicStrategy::get(double price){
 
         if(first_day){
             prev_price=price;
@@ -64,4 +53,4 @@ public:
         }    
         return HOLD;
     }
-};
+}
