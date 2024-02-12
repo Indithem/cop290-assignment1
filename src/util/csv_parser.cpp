@@ -16,7 +16,7 @@ std::vector<std::string> CSV_reader::get_next_line(){
     std::vector<std::string> line_data;
     if (std::getline(file, line)){
         std::string cell;
-        for (int i = 0; i < line.size(); i++){
+        for (long unsigned i = 0; i < line.size(); i++){
             if (line[i] == ','){
                 line_data.push_back(cell);
                 cell = "";

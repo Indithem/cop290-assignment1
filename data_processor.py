@@ -90,8 +90,9 @@ class processor:
                 benchmark_results.append((f"{fileformat}{test_name}", time, size))
         return benchmark_results
 
-    def write_to_csv(self) -> None:
-        self.data.to_csv(f"{self.SYMBOL}.csv", index=False)
+    def write_to_csv(self, file_name=None) -> None:
+        file_name = file_name or f"{self.SYMBOL}.csv"
+        self.data.to_csv(file_name, index=False)
 
     # def write_to_txt_asStr(self) -> None:
     #     with open(f"{self.SYMBOL}_asStr.txt", "w") as f:
@@ -201,22 +202,24 @@ def make_graph(benchmark_results: list[(str, float, float)]) -> plt.Figure:
 
 def main():
     """
-    Arguments should be given as Symbol, start_date, end_date
+    Arguments should be given as Symbol, start_date, end_date, prev_days, Symbol2
     """
     if len(sys.argv) < 4:
         print(
-            "Usage: python data_processor.py <SYMBOL> <start_date> <end_date> ?<prev_days>"
+            "Usage: python data_processor.py <SYMBOL> <start_date> <end_date> ?<prev_days> <SYMBOL2>"
         )
         sys.exit(1)
     start_date = datetime.datetime.strptime(sys.argv[2], "%d/%m/%Y").date()
     end_date = datetime.datetime.strptime(sys.argv[3], "%d/%m/%Y").date()
-    if len(sys.argv) == 5:
+    if len(sys.argv) > 4:
         prev_days = int(sys.argv[4])
     else:
         prev_days = 0
     p = processor(sys.argv[1], start_date, end_date, prev_days)
-    p.write_to_csv()
-
+    p.write_to_csv("history.csv")
+    if len(sys.argv) > 5:
+        p2 = processor(sys.argv[5], start_date, end_date, prev_days)
+        p2.write_to_csv("history2.csv")
 
 if __name__ == "__main__":
     main()

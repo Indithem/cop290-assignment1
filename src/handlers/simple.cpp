@@ -1,4 +1,4 @@
-#include "../handlers.h"
+#include "handlers.h"
 using namespace std;
 
 void write_to_csv_files_simple(vector<Strategies::Action> actions, int x){
@@ -109,11 +109,79 @@ Strategies::Strategy* construct_simple_strategy(int argc, char* argv[]){
             throw invalid_argument("Arguments for BASIC strategy must be integers");
         }
         return new Strategies::BasicStrategy(n,x);
+    } else if (strategy_str == "DMA"){
+        // args are n, x, p
+        if (argc < 5){
+            throw invalid_argument("Not enough arguments for DMA strategy");
+        }
+        int n, x, p;
+        try{
+            n = stoi(argv[2]);
+            x = stoi(argv[3]);
+            p = stoi(argv[4]);
+        } catch (exception& e){
+            throw invalid_argument("Arguments for DMA strategy must be integers");
+        }
+        return new Strategies::DMAStrategy(n,x,p);
+    } else if (strategy_str == "DMA++"){
+        // args are n, x, p, max_hold_days ,c1, c2
+        if (argc < 8){
+            throw invalid_argument("Not enough arguments for DMA++ strategy");
+        }
+        int n, x, p, max_hold_days;
+        double c1, c2;
+        try{
+            n = stoi(argv[2]);
+            x = stoi(argv[3]);
+            p = stoi(argv[4]);
+            max_hold_days = stoi(argv[5]);
+            c1 = stod(argv[6]);
+            c2 = stod(argv[7]);
+        } catch (exception& e){
+            throw invalid_argument("Arguments for DMA++ strategy must be integers");
+        }
+        return new Strategies::DMA2Strategy(n,x,p,max_hold_days,c1,c2);
+    } else if (strategy_str == "MACD"){
+        // args are x
+        if (argc < 3){
+            throw invalid_argument("Not enough arguments for MACD strategy");
+        }
+        int x;
+        int n;
+        try{
+            x = stoi(argv[2]);
+        } catch (exception& e){
+            throw invalid_argument("Arguments for MACD strategy must be integers");
+        }
+        return new Strategies::MacdStrategy(x,n);
+    } else if (strategy_str == "RSI"){
+        // args are x, n, oversold, overbought
+        if (argc < 6){
+            throw invalid_argument("Not enough arguments for RSI strategy");
+        }
+        int x, n;
+        double oversold, overbought;
+        try{
+            x = stoi(argv[2]);
+            n = stoi(argv[3]);
+            oversold = stod(argv[4]);
+            overbought = stod(argv[5]);
+        } catch (exception& e){
+            throw invalid_argument("Arguments for RSI strategy must be integers");
+        }
+        return new Strategies::RsiStrategy(x,n,oversold,overbought);
     }
+    throw invalid_argument("Invalid strategy name");
 }
 
 void Simple_Strategy_handler(int argc, char* argv[]){
-    Strategies::Strategy* strat = construct_simple_strategy(argc, argv);
+    Strategies::Strategy* strat;
+    try{
+        strat = construct_simple_strategy(argc, argv);
+    } catch (exception& e){
+        cout << e.what() << endl;
+        return;
+    }
     auto m = run_simple_strategy(strat);
     write_to_csv_files_simple(m.second, strat->x);
     delete strat;

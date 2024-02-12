@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include "../strategies/lib.h"
-#include "csv_parser.h"
+#include "../util/csv_parser.h"
 
 void Simple_Strategy_handler(int argc, char* argv[]);
 void Pairs_Strategy_handler(int argc, char* argv[]);
