@@ -1,0 +1,120 @@
+#include "../handlers.h"
+using namespace std;
+
+void write_to_csv_files_simple(vector<Strategies::Action> actions, int x){
+    util::CSV_reader historical_data("history.csv");
+    util::CSV_writer cashflow("daily_cashflow.csv");
+    util::CSV_writer statistics("order_statistics.csv");
+    double cash =0;
+    int position = 0; 
+    double price;
+    string date;
+
+
+    cashflow.write_line(vector<string>{"Date", "Cashflow"});
+    statistics.write_line(vector<string>{"Date", "Order Direction","quantity","price"});
+    historical_data.get_next_line(); // headers
+
+    size_t i = 0;
+    for (vector<string> line = historical_data.get_next_line(); line.size() > 0; line = historical_data.get_next_line()){
+        price = stod(line[1]);
+        date = line[0];
+        auto action = actions[i];
+        switch (action)
+        {
+        case Strategies::BUY:
+            if(position < x){
+                statistics.write_line(vector<string>{date, "BUY","1",line[1]});
+                cash -= price;
+                position++;
+            }
+            break;
+        
+        case Strategies::SELL:
+            if(position > -x){
+                statistics.write_line(vector<string>{date, "SELL","1",line[1]});
+                cash += price;
+                position--;
+            }
+            break;
+
+        case Strategies::HOLD:
+            break;
+        }
+        cashflow.write_line(vector<string>{date, to_string(cash)});
+        i++;
+    }
+
+    cash += position*price;
+
+    util::CSV_writer final_cash("final_pnl.txt");
+    final_cash.write_line(vector<string>{ to_string(cash)});
+}
+
+pair<double, vector<Strategies::Action>> run_simple_strategy(Strategies::Strategy* strat){
+    util::CSV_reader historical_data("history.csv");
+    vector<double> prices;
+    historical_data.get_next_line(); // headers
+    int n = strat->n;
+    for (int i =0; i<n; i++){
+        auto line = historical_data.get_next_line();
+        prices.push_back(stod(line[1]));
+    }
+    strat->init_first_n_days(prices);
+
+    double cash =0;
+    int position = 0; 
+    double price;
+    vector<Strategies::Action> return_vector;
+    for (vector<string> line = historical_data.get_next_line(); line.size() > 0; line = historical_data.get_next_line()){
+        price = stod(line[1]);
+        Strategies::Action action =  strat->get(price);
+        switch (action)
+        {
+        case Strategies::BUY:
+            if(position < strat->x){
+                cash -= price;
+                position++;
+            }
+            break;
+        
+        case Strategies::SELL:
+            if(position > -strat->x){
+                cash += price;
+                position--;
+            }
+            break;
+
+        case Strategies::HOLD:
+            break;
+        }
+        return_vector.push_back(action);
+    }
+
+    cash += position*price;
+    return {cash, return_vector};
+}
+
+Strategies::Strategy* construct_simple_strategy(int argc, char* argv[]){
+    string strategy_str = argv[1];
+    if (strategy_str == "BASIC"){
+        if (argc < 4){
+            throw invalid_argument("Not enough arguments for BASIC strategy");
+        }
+        int n, x;
+        try{
+            n = stoi(argv[2]);
+            x = stoi(argv[3]);
+        } catch (exception& e){
+            throw invalid_argument("Arguments for BASIC strategy must be integers");
+        }
+        return new Strategies::BasicStrategy(n,x);
+    }
+}
+
+void Simple_Strategy_handler(int argc, char* argv[]){
+    Strategies::Strategy* strat = construct_simple_strategy(argc, argv);
+    auto m = run_simple_strategy(strat);
+    write_to_csv_files_simple(m.second, strat->x);
+    delete strat;
+}

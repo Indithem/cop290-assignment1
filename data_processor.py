@@ -29,6 +29,9 @@ class processor:
     REQUIRED_COLUMNS = [
         "DATE",
         "CLOSE",
+        "HIGH",
+        "LOW",
+        "PREV. CLOSE"
     ]
 
     def __init__(

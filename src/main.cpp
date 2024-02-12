@@ -1,127 +1,56 @@
 #include <iostream>
 #include <string>
-#include <vector>
-#include "util/csv_parser.h"
-#include "strategies/lib.h"
+#include "util/handlers.h"
 using namespace std;
 
-void feed_init_days(Strategies::Strategy* s, util::CSV_reader& historical_data){
-    vector<double> prices;
-    for (vector<string> line = historical_data.get_next_line(); line.size() > 0; line = historical_data.get_next_line()){
-        prices.push_back(stod(line[1]));
-        if (prices.size() == s->n){
-            break;
-        }
+
+enum class Strategy_Types{
+    SIMPLE,
+    PAIRS,
+    BEST_OF_ALL
+};
+
+Strategy_Types get_strategy_type(string strategy_str){
+    if (strategy_str == "BASIC"){return Strategy_Types::SIMPLE;}
+    else if (strategy_str == "DMA"){return Strategy_Types::SIMPLE;}
+    else if (strategy_str == "DMA++"){return Strategy_Types::SIMPLE;}
+    else if (strategy_str == "MACD"){return Strategy_Types::SIMPLE;}
+    else if (strategy_str == "RSI"){return Strategy_Types::SIMPLE;}
+    else if (strategy_str == "ADX"){return Strategy_Types::SIMPLE;}
+    else if (strategy_str == "LINEAR_REGRESSION"){return Strategy_Types::SIMPLE;}
+    else if (strategy_str == "BEST_OF_ALL"){return Strategy_Types::BEST_OF_ALL;}
+    else if (strategy_str == "PAIRS"){return Strategy_Types::PAIRS;}
+    else {
+        throw invalid_argument("Invalid strategy");
     }
-    s->init_first_n_days(prices);
 }
 
-Strategies::Strategy* get_args(int argc, char* argv[]){
-    /*Arguments will be <STRATEGY> ...*/
-    using namespace std;
-
+int main(int argc, char* argv[]){
     if (argc < 2){
         throw invalid_argument("No strategy provided");
     }
     string strategy_str = argv[1];
-    Strategies::Strategy* strat;
-    if (strategy_str == "BASIC"){
-        // The arguments should be n x
-        if (argc < 4){
-            throw invalid_argument("Not enough arguments for BASIC strategy");
-        }
-        int n, x;
-        try{
-            n = stoi(argv[2]);
-            x = stoi(argv[3]);
-        } catch (exception& e){
-            throw invalid_argument("Arguments for BASIC strategy must be integers");
-        }
-        strat = new Strategies::BasicStrategy{x=x,n=n};
+    Strategy_Types strategy_type;
+    try
+    {
+        strategy_type = get_strategy_type(strategy_str);
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
 
-    } 
-    else if (strategy_str == "DMA"){
-        // The arguments should be n x
-        if (argc < 5){
-            throw invalid_argument("Not enough arguments for DMA strategy");
-        }
-        int n, x,p;
-        try{
-            n = stoi(argv[2]);
-            x = stoi(argv[3]);
-            p = stoi(argv[4]);
-            
-        } catch (exception& e){
-            throw invalid_argument("Arguments for DMA strategy must be integers");
-        }
-        strat = new Strategies::DMAStrategy{x=x,n=n,p=p};
-
-    } 
-    else if (false){} // Add more strategies here\
-
-    else {
-        throw invalid_argument("Invalid strategy");
-    } 
+    switch (strategy_type)
+    {
+        case Strategy_Types::SIMPLE:
+            Simple_Strategy_handler(argc, argv);
+            break;
+        case Strategy_Types::PAIRS:
+            Pairs_Strategy_handler(argc, argv);
+            break;
+        case Strategy_Types::BEST_OF_ALL:
+            Best_of_all_Strategy_handler(argc, argv);
+            break;
+    }
     
-    return strat;
-}
-
-int main(int argc, char* argv[]){
-    using namespace std;
-    Strategies::Strategy* strat;
-    try{
-        strat = get_args(argc, argv);
-    } catch (exception& e){
-        cerr << e.what() << endl;
-        return 1;
-    }
-    util::CSV_reader historical_data("history.csv");
-    util::CSV_writer cashflow("daily_cashflow.csv");
-    util::CSV_writer statistics("order_statistics.csv");
-    double cash =0;
-    int position = 0; 
-    double price;
-    string date;
-
-    cashflow.write_line(vector<string>{"Date", "Cashflow"});
-    statistics.write_line(vector<string>{"Date", "Order Direction","quantity","price"});
-    historical_data.get_next_line(); // headers
-
-    feed_init_days(strat, historical_data);
-
-    for (vector<string> line = historical_data.get_next_line(); line.size() > 0; line = historical_data.get_next_line()){
-        price = stod(line[1]);
-        date = line[0];
-        Strategies::Action action =  strat->get(price);
-        switch (action)
-        {
-        case Strategies::BUY:
-            if(position < strat->x){
-                statistics.write_line(vector<string>{date, "BUY","1",line[1]});
-                cash -= price;
-                position++;
-            }
-            break;
-        
-        case Strategies::SELL:
-            if(position > -strat->x){
-                statistics.write_line(vector<string>{date, "SELL","1",line[1]});
-                cash += price;
-                position--;
-            }
-            break;
-
-        case Strategies::HOLD:
-            break;
-        }
-        cashflow.write_line(vector<string>{date, to_string(cash)});
-    }
-
-    cash += position*price;
-
-        util::CSV_writer final_cash("final_pnl.txt");
-        final_cash.write_line(vector<string>{ to_string(cash)});
-
-
-    delete strat;
 }

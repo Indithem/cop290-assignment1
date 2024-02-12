@@ -7,7 +7,7 @@
       "request": "launch",
       "program": "${workspaceFolder}/a.out",
       "args": [
-        "DMA",
+        "BASIC",
         "5",
         "3",
         "2"
