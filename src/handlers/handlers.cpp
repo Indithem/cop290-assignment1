@@ -3,3 +3,14 @@
 #include "best.cpp"
 #include "adx.cpp"
 #include "linear.cpp"
+
+// assumes arguments are given as arg_name=value 
+string get_argument(int argc, char* argv[], string arg_name){
+    for (int i = 0; i < argc; i++){
+        string arg = argv[i];
+        if (arg.find(arg_name) != string::npos){
+            return arg.substr(arg.find("=")+1);
+        }
+    }
+    return "";
+}

@@ -111,16 +111,15 @@ pair<double, vector<Strategies::Action>> run_simple_strategy(Strategies::Strateg
     return {cash, return_vector};
 }
 
-Strategies::Strategy* construct_simple_strategy(int argc, char* argv[]){
-    string strategy_str = argv[1];
+Strategies::Strategy* construct_simple_strategy(int argc, char* argv[], string strategy_str){
     if (strategy_str == "BASIC"){
         if (argc < 4){
             throw invalid_argument("Not enough arguments for BASIC strategy");
         }
         int n, x;
         try{
-            n = stoi(argv[2]);
-            x = stoi(argv[3]);
+            n = stoi(get_argument(argc, argv, "n"));
+            x = stoi(get_argument(argc, argv, "x"));
         } catch (exception& e){
             throw invalid_argument("Arguments for BASIC strategy must be integers");
         }
@@ -132,9 +131,9 @@ Strategies::Strategy* construct_simple_strategy(int argc, char* argv[]){
         }
         int n, x, p;
         try{
-            n = stoi(argv[2]);
-            x = stoi(argv[3]);
-            p = stoi(argv[4]);
+            n = stoi(get_argument(argc, argv, "n"));
+            x = stoi(get_argument(argc, argv, "x"));
+            p = stoi(get_argument(argc, argv, "p"));
         } catch (exception& e){
             throw invalid_argument("Arguments for DMA strategy must be integers");
         }
@@ -147,12 +146,12 @@ Strategies::Strategy* construct_simple_strategy(int argc, char* argv[]){
         int n, x, p, max_hold_days;
         double c1, c2;
         try{
-            n = stoi(argv[2]);
-            x = stoi(argv[3]);
-            p = stoi(argv[4]);
-            max_hold_days = stoi(argv[5]);
-            c1 = stod(argv[6]);
-            c2 = stod(argv[7]);
+            n = stoi(get_argument(argc, argv, "n"));
+            x = stoi(get_argument(argc, argv, "x"));
+            p = stoi(get_argument(argc, argv, "p"));
+            max_hold_days = stoi(get_argument(argc, argv, "max_hold_days"));
+            c1 = stod(get_argument(argc, argv, "c1"));
+            c2 = stod(get_argument(argc, argv, "c2"));
         } catch (exception& e){
             throw invalid_argument("Arguments for DMA++ strategy must be integers");
         }
@@ -165,11 +164,11 @@ Strategies::Strategy* construct_simple_strategy(int argc, char* argv[]){
         int x;
         int n;
         try{
-            x = stoi(argv[2]);
+            x = stoi(get_argument(argc, argv, "x"));
         } catch (exception& e){
             throw invalid_argument("Arguments for MACD strategy must be integers");
         }
-        return new Strategies::MacdStrategy(x,n);
+        return new Strategies::MacdStrategy(x);
     } else if (strategy_str == "RSI"){
         // args are x, n, oversold, overbought
         if (argc < 6){
@@ -178,10 +177,10 @@ Strategies::Strategy* construct_simple_strategy(int argc, char* argv[]){
         int x, n;
         double oversold, overbought;
         try{
-            x = stoi(argv[2]);
-            n = stoi(argv[3]);
-            oversold = stod(argv[4]);
-            overbought = stod(argv[5]);
+            x= stoi(get_argument(argc, argv, "x"));
+            n= stoi(get_argument(argc, argv, "n"));
+            oversold = stod(get_argument(argc, argv, "oversold"));
+            overbought = stod(get_argument(argc, argv, "overbought"));
         } catch (exception& e){
             throw invalid_argument("Arguments for RSI strategy must be integers");
         }
@@ -193,7 +192,7 @@ Strategies::Strategy* construct_simple_strategy(int argc, char* argv[]){
 void Simple_Strategy_handler(int argc, char* argv[]){
     Strategies::Strategy* strat;
     try{
-        strat = construct_simple_strategy(argc, argv);
+        strat = construct_simple_strategy(argc, argv, string(argv[1]));
     } catch (exception& e){
         cout << e.what() << endl;
         return;

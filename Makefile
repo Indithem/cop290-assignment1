@@ -14,12 +14,12 @@ x?=5
 .PHONY: all
 all: $(environment_name)/pyvenv.cfg main.exe
 	$(py) data_processor.py $(symbol1) $(start_date) $(end_date) $(n) $(symbol2) $(train_start_date) $(train_end_date)
-	./main.exe $(strategy) $(n) $(x) $(p) \
-			$(max_hold_days) $(c1) $(c2) \
-			$(oversold_threshold) $(overbought_threshold) \
-			$(adx_threshold) \
-			$(threshold) \
-			$(stop_loss_threshold)
+	./main.exe $(strategy) n=$(n) x=$(x) p=$(p) \
+			max_hold_days=$(max_hold_days) c1=$(c1) c2=$(c2) \
+			overbought_threshold=$(oversold_threshold) overbought_threshold=$(overbought_threshold) \
+			adx_threshold=$(adx_threshold) \
+			threshold=$(threshold) \
+			stop_loss_threshold=$(stop_loss_threshold)
 	# @rm -f history.csv history2.csv
 
 .PHONY: debug

@@ -10,9 +10,8 @@ void Adx_Strategy_handler(int argc, char* argv[]){
     int n, x;
     double adx_threshold;
     try{
-        n = stoi(argv[2]);
-        x = stoi(argv[3]);
-        adx_threshold = stod(argv[4]);
+        n = stoi(get_argument(argc, argv, "n"));
+        x = stoi(get_argument(argc, argv, "x"));
     } catch (exception& e){
         cerr<<"Arguments for ADX strategy must be integers";
         return;
@@ -20,7 +19,6 @@ void Adx_Strategy_handler(int argc, char* argv[]){
     Strategies::AdxStrategy strat(n,x,adx_threshold);
 
     util::CSV_reader historical_data("history.csv");
-    vector<double> high_prices, low_prices;
     auto headers = historical_data.get_next_line(); // headers
     if (
         headers[0] != "DATE" ||
@@ -40,6 +38,7 @@ void Adx_Strategy_handler(int argc, char* argv[]){
     }
     
 
+    vector<double> high_prices, low_prices;
     for (int i =0; i<n; i++){
         auto line = historical_data.get_next_line();
         high_prices.push_back(stod(line[2]));
