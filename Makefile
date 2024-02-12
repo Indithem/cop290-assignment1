@@ -29,18 +29,18 @@ debug: main.exe
 .PHONY: pip_venv
 pip_venv: $(environment_name)/pyvenv.cfg
 	
-main.exe: build/util/csv_parser.o build/strategies.o build/handlers.o build/main.o
+main.exe: build/util/matrices.o build/util/csv_parser.o build/strategies.o build/handlers.o build/main.o
 	$(GPP) $(CFLAGS) -o $@ $^
 
 build/main.o: src/main.cpp
 	@mkdir -p build
 	$(GPP) $(CFLAGS) -c -o $@ $<
 
-build/strategies.o: $(wildcard src/strategies/*) build/util/csv_parser.o
+build/strategies.o: $(wildcard src/strategies/*)
 	@mkdir -p build
 	$(GPP) $(CFLAGS) -c -o $@ src/strategies/lib.cpp
 
-build/handlers.o: $(wildcard src/handlers/*) build/util/csv_parser.o
+build/handlers.o: $(wildcard src/handlers/*)
 	@mkdir -p build
 	$(GPP) $(CFLAGS) -c -o $@ src/handlers/handlers.cpp
 
