@@ -1,0 +1,1 @@
+make strategy=ADX symbol=SBIN x=3 n=14 adx_threshold=25 start_date=01/01/2023 end_date=01/01/2024

@@ -3,11 +3,9 @@
 using namespace std;
 
 namespace Strategies {
-    // void MacdStrategy::init_first_n_days(std::vector<double> days) {
-    //     for (auto &&i : days) {
-    //         prices.push_back(i);
-    //     }
-    // }
+    void MacdStrategy::init_first_n_days(std::vector<double> days) {
+        
+    }
 
     Action MacdStrategy::get(double price) {
         

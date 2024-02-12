@@ -2,8 +2,9 @@ python_executable?=python3
 environment_name=.venv
 py=$(environment_name)/bin/$(python_executable)
 GPP?=g++
-CFLAGS?=-std=c++11
+CFLAGS?=-std=c++11 -g 
 symbol?=SBIN
+symbol1?=$(symbol)
 strategy?=DMA
 start_date?=02/02/2024
 end_date?=06/02/2024
@@ -14,28 +15,41 @@ p?=1
 
 .PHONY: all
 all: $(environment_name)/pyvenv.cfg main.exe
-	$(py) data_processor.py $(symbol) $(start_date) $(end_date) $(n)
-	@mv $(symbol).csv history.csv 
-	./main.exe $(strategy) $(n) $(x) $(p)
-	# @rm -f history.csv
+	$(py) data_processor.py $(symbol1) $(start_date) $(end_date) $(n) $(symbol2) $(train_start_date) $(train_end_date)
+	./main.exe $(strategy) n=$(n) x=$(x) p=$(p) \
+			max_hold_days=$(max_hold_days) c1=$(c1) c2=$(c2) \
+			overbought_threshold=$(oversold_threshold) overbought_threshold=$(overbought_threshold) \
+			adx_threshold=$(adx_threshold) \
+			threshold=$(threshold) \
+			stop_loss_threshold=$(stop_loss_threshold)
+	# @rm -f history.csv history2.csv
+
+.PHONY: debug
+debug: main.exe
+	@mv main.exe a.out
 
 .PHONY: pip_venv
 pip_venv: $(environment_name)/pyvenv.cfg
 	
-main.exe: build/util/csv_parser.o build/strategies.o build/main.o
+main.exe: build/util/matrices.o build/util/csv_parser.o build/strategies.o build/handlers.o build/main.o
 	$(GPP) $(CFLAGS) -o $@ $^
 
 build/main.o: src/main.cpp
 	@mkdir -p build
 	$(GPP) $(CFLAGS) -c -o $@ $<
 
-build/strategies.o: $(wildcard src/strategies/*) build/util/csv_parser.o
+build/strategies.o: $(wildcard src/strategies/*)
 	@mkdir -p build
 	$(GPP) $(CFLAGS) -c -o $@ src/strategies/lib.cpp
+
+build/handlers.o: $(wildcard src/handlers/*)
+	@mkdir -p build
+	$(GPP) $(CFLAGS) -c -o $@ src/handlers/handlers.cpp
 
 build/util/%.o: src/util/%.cpp src/util/%.h
 	@mkdir -p build/util
 	$(GPP) $(CFLAGS) -c -o $@ $<
+
 
 $(environment_name)/pyvenv.cfg: pip_requirements.txt
 # 	works for apt in Debian of gradescope servers, dont know about other OS's
@@ -48,5 +62,5 @@ clean:
 	@rm -f nifty_list.csv
 	@rm -rf __pycache__
 	@rm -f $(foreach ff, $(cleanup_formats), *$(ff))
-	@rm -f main.exe daily_cashflow.csv history.csv order_statistics.csv a.out final_pnl.txt
+	@rm -f main.exe daily_cashflow.csv history.csv history2.csv order_statistics.csv a.out final_pnl.txt
 	@rm -rf build
