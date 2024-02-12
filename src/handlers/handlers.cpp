@@ -14,3 +14,25 @@ string get_argument(int argc, char* argv[], string arg_name){
     }
     return "";
 }
+
+void play_on_actions(Strategies::Action action, double& cash, int& position, double price, int x){
+    switch (action)
+    {
+    case Strategies::BUY:
+        if(position < x){
+            cash -= price;
+            position++;
+        }
+        break;
+    
+    case Strategies::SELL:
+        if(position > x){
+            cash += price;
+            position--;
+        }
+        break;
+
+    case Strategies::HOLD:
+        break;
+    }
+}

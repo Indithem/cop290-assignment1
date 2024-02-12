@@ -1,23 +1,8 @@
 #include "handlers.h"
 using namespace std;
 
-void Adx_Strategy_handler(int argc, char* argv[]){
-    // args are n,x adx_threshold
-    if (argc < 4){
-        cerr<<"Not enough arguments for ADX strategy";
-        return;
-    }
-    int n, x;
-    double adx_threshold;
-    try{
-        n = stoi(get_argument(argc, argv, "n"));
-        x = stoi(get_argument(argc, argv, "x"));
-    } catch (exception& e){
-        cerr<<"Arguments for ADX strategy must be integers";
-        return;
-    }
-    Strategies::AdxStrategy strat(n,x,adx_threshold);
 
+std::pair<double, std::vector<Strategies::Action>> run_adx_strategy(Strategies::AdxStrategy* strat){
     util::CSV_reader historical_data("history.csv");
     auto headers = historical_data.get_next_line(); // headers
     if (
@@ -34,9 +19,11 @@ void Adx_Strategy_handler(int argc, char* argv[]){
             cerr << i << " ";
         }
         cerr << ("\nHeaders in csv file are not as expected");
-        return;
+        throw "Headers in csv file are not as expected";
     }
     
+    int n = strat->n;
+    int x = strat->x;
 
     vector<double> high_prices, low_prices;
     for (int i =0; i<n; i++){
@@ -44,14 +31,58 @@ void Adx_Strategy_handler(int argc, char* argv[]){
         high_prices.push_back(stod(line[2]));
         low_prices.push_back(stod(line[3]));
     }
-    strat.init_first_n_days(high_prices, low_prices);
+    strat->init_first_n_days(high_prices, low_prices);
     vector<Strategies::Action> actions;
-
+    double cash = 0, price;
+    int position = 0;
+    double price;
     for (vector<string> line = historical_data.get_next_line(); line.size() > 0; line = historical_data.get_next_line()){
+        price = stod(line[1]);
         double high = stod(line[2]);
         double low = stod(line[3]);
         double prev_close = stod(line[4]);
-        actions.push_back(strat.get(high, low, prev_close));
+        Strategies::Action action = strat->get(high, low, prev_close);
+        actions.push_back(action);
+        play_on_actions(action, cash, position, price, x);
+    }
+
+    cash += position*price;
+    return make_pair(cash, actions);
+}
+
+Strategies::AdxStrategy* construct_adx_strategy(int argc, char* argv[]){
+    // args are n,x adx_threshold
+    if (argc < 4){
+        throw ("Not enough arguments for ADX strategy");
+    }
+    int n, x;
+    double adx_threshold;
+    try{
+        n = stoi(get_argument(argc, argv, "n"));
+        x = stoi(get_argument(argc, argv, "x"));
+    } catch (exception& e){
+        throw("Arguments for ADX strategy must be integers");
+    }
+    return new Strategies::AdxStrategy (n,x,adx_threshold);
+}
+
+void Adx_Strategy_handler(int argc, char* argv[]){
+    Strategies::AdxStrategy* strat;
+    try{
+        strat = construct_adx_strategy(argc, argv);
+    } catch (const char* e){
+        cerr<<e;
+        return;
+    }
+
+    int x = strat->x;
+    int n = strat->n;
+    vector<Strategies::Action> actions;
+    try{
+        actions = run_adx_strategy(strat).second;
+    } catch (const char* e){
+        cerr<<e;
+        return;
     }
 
     write_to_csv_files_simple(actions, x, n);
