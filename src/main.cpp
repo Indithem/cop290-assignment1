@@ -8,7 +8,8 @@ enum class Strategy_Types{
     SIMPLE,
     PAIRS,
     BEST_OF_ALL,
-    ADX
+    ADX,
+    LINEAR_REGRESSION
 };
 
 Strategy_Types get_strategy_type(string strategy_str){
@@ -18,7 +19,7 @@ Strategy_Types get_strategy_type(string strategy_str){
     else if (strategy_str == "MACD"){return Strategy_Types::SIMPLE;}
     else if (strategy_str == "RSI"){return Strategy_Types::SIMPLE;}
     else if (strategy_str == "ADX"){return Strategy_Types::ADX;}
-    else if (strategy_str == "LINEAR_REGRESSION"){return Strategy_Types::SIMPLE;}
+    else if (strategy_str == "LINEAR_REGRESSION"){return Strategy_Types::LINEAR_REGRESSION;}
     else if (strategy_str == "BEST_OF_ALL"){return Strategy_Types::BEST_OF_ALL;}
     else if (strategy_str == "PAIRS"){return Strategy_Types::PAIRS;}
     else {
@@ -54,6 +55,9 @@ int main(int argc, char* argv[]){
             break;
         case Strategy_Types::ADX:
             Adx_Strategy_handler(argc, argv);
+            break;
+        case Strategy_Types::LINEAR_REGRESSION:
+            Linear_Regression_Strategy_handler(argc, argv);
             break;
     }
     

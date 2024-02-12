@@ -21,7 +21,25 @@ void Adx_Strategy_handler(int argc, char* argv[]){
 
     util::CSV_reader historical_data("history.csv");
     vector<double> high_prices, low_prices;
-    historical_data.get_next_line(); // headers
+    auto headers = historical_data.get_next_line(); // headers
+    if (
+        headers[0] != "DATE" ||
+        headers[1] != "CLOSE" ||
+        headers[2] != "HIGH" ||
+        headers[3] != "LOW" ||
+        headers[4] != "PREV. CLOSE"
+    ){
+        cerr << "Expected headers: DATE CLOSE HIGH LOW PREV. CLOSE\n"
+        << "Got headers: ";
+        for (auto &&i : headers)
+        {
+            cerr << i << " ";
+        }
+        cerr << ("\nHeaders in csv file are not as expected");
+        return;
+    }
+    
+
     for (int i =0; i<n; i++){
         auto line = historical_data.get_next_line();
         high_prices.push_back(stod(line[2]));

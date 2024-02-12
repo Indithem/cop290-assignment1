@@ -57,7 +57,20 @@ void write_to_csv_files_simple(vector<Strategies::Action> actions, int x, int n)
 pair<double, vector<Strategies::Action>> run_simple_strategy(Strategies::Strategy* strat){
     util::CSV_reader historical_data("history.csv");
     vector<double> prices;
-    historical_data.get_next_line(); // headers
+    auto headers = historical_data.get_next_line(); // headers
+    if (
+        headers[0] != "DATE" ||
+        headers[1] != "CLOSE" 
+    ){
+        cerr << "Expected headers: DATE CLOSE\n"
+        << "Got headers: ";
+        for (auto &&i : headers)
+        {
+            cerr << i << " ";
+        }
+        cerr << ("\nHeaders in csv file are not as expected");
+        exit(1);
+    }
     int n = strat->n;
     for (int i =0; i<n; i++){
         auto line = historical_data.get_next_line();

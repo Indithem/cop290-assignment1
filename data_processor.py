@@ -32,6 +32,7 @@ class processor:
         "HIGH",
         "LOW",
         "PREV. CLOSE",
+        "OPEN",
         "VWAP",
         "NO OF TRADES"
     ]

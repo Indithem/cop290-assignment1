@@ -30,5 +30,11 @@ namespace Strategies{
       virtual void init_first_n_days(std::vector<double>,std::vector<double>)=0;
    };
    
+   class LinearRegressionStrategy{
+   public:
+      int x,n;
+      LinearRegressionStrategy( int x, int n): x(x),n(n){}
+      Action get(double price, double close, double open, double high, double low, double vwap, double no_of_trades);
+   };
 
 }
