@@ -1,7 +1,7 @@
 #include "handlers.h"
 using namespace std;
 
-void write_to_csv_files_simple(vector<Strategies::Action> actions, int x){
+void write_to_csv_files_simple(vector<Strategies::Action> actions, int x, int n){
     util::CSV_reader historical_data("history.csv");
     util::CSV_writer cashflow("daily_cashflow.csv");
     util::CSV_writer statistics("order_statistics.csv");
@@ -14,6 +14,9 @@ void write_to_csv_files_simple(vector<Strategies::Action> actions, int x){
     cashflow.write_line(vector<string>{"Date", "Cashflow"});
     statistics.write_line(vector<string>{"Date", "Order Direction","quantity","price"});
     historical_data.get_next_line(); // headers
+    for (int i =0; i<n; i++){
+        historical_data.get_next_line();
+    } // skip first n lines
 
     size_t i = 0;
     for (vector<string> line = historical_data.get_next_line(); line.size() > 0; line = historical_data.get_next_line()){
@@ -183,6 +186,6 @@ void Simple_Strategy_handler(int argc, char* argv[]){
         return;
     }
     auto m = run_simple_strategy(strat);
-    write_to_csv_files_simple(m.second, strat->x);
+    write_to_csv_files_simple(m.second, strat->x, strat->n);
     delete strat;
 }

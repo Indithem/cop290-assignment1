@@ -7,7 +7,8 @@ using namespace std;
 enum class Strategy_Types{
     SIMPLE,
     PAIRS,
-    BEST_OF_ALL
+    BEST_OF_ALL,
+    ADX
 };
 
 Strategy_Types get_strategy_type(string strategy_str){
@@ -16,7 +17,7 @@ Strategy_Types get_strategy_type(string strategy_str){
     else if (strategy_str == "DMA++"){return Strategy_Types::SIMPLE;}
     else if (strategy_str == "MACD"){return Strategy_Types::SIMPLE;}
     else if (strategy_str == "RSI"){return Strategy_Types::SIMPLE;}
-    else if (strategy_str == "ADX"){return Strategy_Types::SIMPLE;}
+    else if (strategy_str == "ADX"){return Strategy_Types::ADX;}
     else if (strategy_str == "LINEAR_REGRESSION"){return Strategy_Types::SIMPLE;}
     else if (strategy_str == "BEST_OF_ALL"){return Strategy_Types::BEST_OF_ALL;}
     else if (strategy_str == "PAIRS"){return Strategy_Types::PAIRS;}
@@ -50,6 +51,9 @@ int main(int argc, char* argv[]){
             break;
         case Strategy_Types::BEST_OF_ALL:
             Best_of_all_Strategy_handler(argc, argv);
+            break;
+        case Strategy_Types::ADX:
+            Adx_Strategy_handler(argc, argv);
             break;
     }
     
