@@ -13,7 +13,7 @@ namespace Strategies{
         n_days.pop_front();
         n_days.push_back(price);
  
-        double avg_gain = 0, avg_loss = 0;
+        double avg_gain = 0.0, avg_loss = 0.0;
 
         for (int i = 1; i < n; i++) {
             double diff = n_days[i] - n_days[i - 1];

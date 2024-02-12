@@ -1,5 +1,6 @@
 #include "lib.h"
 #include <cmath>
+#include <iostream>
 using namespace std;
 namespace Strategies{
      void StopLossPairStrategy::init_first_n_days(std::vector<double> prices_1 , std::vector<double> prices_2){
@@ -35,10 +36,12 @@ namespace Strategies{
         variance = (sum_of_squares_diff / n) - (rolling_mean * rolling_mean);
         sd = sqrt(variance);
         z_score = (spread - rolling_mean) / sd;
-        if (z_score > threshold){
+        cout<<z_score<<endl;
+        if (z_score > threshold || z_score < -stop_loss_threshold){
             return make_pair(SELL,BUY);
         }
-        else if (z_score < -threshold){
+
+        else if (z_score < -threshold || z_score > stop_loss_threshold) {
             return make_pair(BUY,SELL);
         }
         // if stop

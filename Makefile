@@ -5,11 +5,11 @@ GPP?=g++
 CFLAGS?=-std=c++11
 symbol?=SBIN
 strategy?=DMA
-start_date?=01/01/2021
-end_date?=31/12/2022
-x?=5
-n?=7
-p?=2
+start_date?=02/02/2024
+end_date?=06/02/2024
+x?=2
+n?=2
+p?=1
 
 
 .PHONY: all
