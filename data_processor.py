@@ -31,7 +31,9 @@ class processor:
         "CLOSE",
         "HIGH",
         "LOW",
-        "PREV. CLOSE"
+        "PREV. CLOSE",
+        "VWAP",
+        "NO OF TRADES"
     ]
 
     def __init__(
@@ -50,8 +52,8 @@ class processor:
                 to_date=self.end_date,
             )
             df = df[self.REQUIRED_COLUMNS].sort_values(by="DATE")
-            from_date = self.start_date - relativedelta(days=prev_days + 1)
-            to_date = self.start_date - relativedelta(days=1)
+            from_date = self.start_date - relativedelta(days=prev_days)
+            to_date = self.start_date
             prev_days_df = stock_df(
                 symbol=self.SYMBOL,
                 from_date=from_date,
@@ -218,7 +220,12 @@ def main():
     p = processor(sys.argv[1], start_date, end_date, prev_days)
     p.write_to_csv("history.csv")
     if len(sys.argv) > 5:
-        p2 = processor(sys.argv[5], start_date, end_date, prev_days)
+        try:
+            train_start_date = datetime.datetime.strptime(sys.argv[5], "%d/%m/%Y").date()
+            train_end_date = datetime.datetime.strptime(sys.argv[6], "%d/%m/%Y").date()
+            p2 = processor(sys.argv[1], train_start_date, train_end_date)
+        except ValueError as e:
+            p2 = processor(sys.argv[5], start_date, end_date, prev_days)
         p2.write_to_csv("history2.csv")
 
 if __name__ == "__main__":

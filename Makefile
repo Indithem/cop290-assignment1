@@ -9,12 +9,11 @@ strategy?=DMA
 start_date?=01/01/2021
 end_date?=31/12/2022
 x?=5
-n?=7
 
 
 .PHONY: all
 all: $(environment_name)/pyvenv.cfg main.exe
-	$(py) data_processor.py $(symbol1) $(start_date) $(end_date) $(n) $(symbol2)
+	$(py) data_processor.py $(symbol1) $(start_date) $(end_date) $(n) $(symbol2) $(train_start_date) $(train_end_date)
 	./main.exe $(strategy) $(n) $(x) $(p) \
 			$(max_hold_days) $(c1) $(c2) \
 			$(oversold_threshold) $(overbought_threshold) \
