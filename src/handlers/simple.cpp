@@ -13,9 +13,9 @@ void write_to_csv_files_simple(vector<Strategies::Action> actions, int x, int n)
 
     cashflow.write_line(vector<string>{"Date", "Cashflow"});
     statistics.write_line(vector<string>{"Date", "Order Direction","quantity","price"});
-    historical_data.get_next_line(); // headers
+    date = historical_data.get_next_line()[0]; // headers
     for (int i =0; i<n; i++){
-        historical_data.get_next_line();
+        date = historical_data.get_next_line()[0];
     } // skip first n lines
 
     size_t i = 0;
@@ -124,7 +124,7 @@ Strategies::Strategy* construct_simple_strategy(int argc, char* argv[]){
         } catch (exception& e){
             throw invalid_argument("Arguments for BASIC strategy must be integers");
         }
-        return new Strategies::BasicStrategy(n,x);
+        return new Strategies::BasicStrategy{x=x,n=n};
     } else if (strategy_str == "DMA"){
         // args are n, x, p
         if (argc < 5){
@@ -138,7 +138,7 @@ Strategies::Strategy* construct_simple_strategy(int argc, char* argv[]){
         } catch (exception& e){
             throw invalid_argument("Arguments for DMA strategy must be integers");
         }
-        return new Strategies::DMAStrategy(n,x,p);
+        return new Strategies::DMAStrategy(x,n,p);
     } else if (strategy_str == "DMA++"){
         // args are n, x, p, max_hold_days ,c1, c2
         if (argc < 8){
