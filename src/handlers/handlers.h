@@ -10,7 +10,7 @@ void Best_of_all_Strategy_handler(int argc, char* argv[]);
 void Adx_Strategy_handler(int argc, char* argv[]);
 void Linear_Regression_Strategy_handler(int argc, char* argv[]);
 
-void play_on_actions(Strategies::Action a, double& cash, int& position, double price);
+void play_on_actions(Strategies::Action a, double& cash, int& position, double price, int x);
 void write_to_csv_files_simple(std::vector<Strategies::Action> actions, int x, int n);
 std::string get_argument(int argc, char* argv[], std::string arg_name);
 

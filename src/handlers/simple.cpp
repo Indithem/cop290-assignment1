@@ -13,9 +13,9 @@ void write_to_csv_files_simple(vector<Strategies::Action> actions, int x, int n)
 
     cashflow.write_line(vector<string>{"Date", "Cashflow"});
     statistics.write_line(vector<string>{"Date", "Order Direction","quantity","price"});
-    date = historical_data.get_next_line()[0]; // headers
+    historical_data.get_next_line()[0]; // headers
     for (int i =0; i<n; i++){
-        date = historical_data.get_next_line()[0];
+        historical_data.get_next_line()[0];
     } // skip first n lines
 
     size_t i = 0;
@@ -72,6 +72,7 @@ pair<double, vector<Strategies::Action>> run_simple_strategy(Strategies::Strateg
         exit(1);
     }
     int n = strat->n;
+    int x = strat->x;
     for (int i =0; i<n; i++){
         auto line = historical_data.get_next_line();
         prices.push_back(stod(line[1]));
@@ -85,25 +86,7 @@ pair<double, vector<Strategies::Action>> run_simple_strategy(Strategies::Strateg
     for (vector<string> line = historical_data.get_next_line(); line.size() > 0; line = historical_data.get_next_line()){
         price = stod(line[1]);
         Strategies::Action action =  strat->get(price);
-        switch (action)
-        {
-        case Strategies::BUY:
-            if(position < strat->x){
-                cash -= price;
-                position++;
-            }
-            break;
-        
-        case Strategies::SELL:
-            if(position > -strat->x){
-                cash += price;
-                position--;
-            }
-            break;
-
-        case Strategies::HOLD:
-            break;
-        }
+        play_on_actions(action, cash, position, price, x);
         return_vector.push_back(action);
     }
 

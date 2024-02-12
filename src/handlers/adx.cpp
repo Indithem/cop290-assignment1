@@ -85,5 +85,6 @@ void Adx_Strategy_handler(int argc, char* argv[]){
         return;
     }
 
+    delete strat;
     write_to_csv_files_simple(actions, x, n);
 }

@@ -6,3 +6,4 @@
 #include"rsi.cpp"
 #include"revert_pairs.cpp"
 #include"pair_stop_loss.cpp"
+#include"linear_reg.cpp"

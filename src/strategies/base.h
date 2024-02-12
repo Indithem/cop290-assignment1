@@ -31,10 +31,16 @@ namespace Strategies{
    };
    
    class LinearRegressionStrategy{
+      double b0,b1,b2,b3,b4,b5,b6,b7;
+      double prev_close=0, prev_open=0, prev_high=0, prev_low=0, prev_vwap=0, prev_no_of_trades=0;
+      double p;
    public:
       int x,n;
-      LinearRegressionStrategy( int x, int n): x(x),n(n){}
+      LinearRegressionStrategy( int x, double p): x(x), p(p/100){}
       Action get(double price, double close, double open, double high, double low, double vwap, double no_of_trades);
+      // trains the linear regression model
+      // needs a matrix of 
+      void train_data(std::vector<std::vector<double>> x_matrix, std::vector<std::vector<double>> y_matrix);
    };
 
 }

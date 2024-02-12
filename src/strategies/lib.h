@@ -84,7 +84,7 @@ namespace Strategies{
         double signal_line=0;
         int count=0;
     public:
-        MacdStrategy(int x, int n) : Strategy(x,n){}
+        MacdStrategy(int x) : Strategy(x,0){}
         ~MacdStrategy(){}
         void init_first_n_days(std::vector<double> days);
         Action get(double price);
