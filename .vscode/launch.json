@@ -7,8 +7,8 @@
       "request": "launch",
       "program": "${workspaceFolder}/a.out",
       "args": [
-        "RSI",
-        "n=2",
+        "LINEAR_REGRESSION",
+        "n=0",
         "x=3",
         "p=2",
         "max_hold_days=",

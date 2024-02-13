@@ -20,6 +20,7 @@ Strategies::Strategy* construct_simple_strategy(std::vector<std::string>, std::s
 std::pair<double, std::vector<Strategies::Action>> run_adx_strategy(Strategies::AdxStrategy* strat);
 Strategies::AdxStrategy* construct_adx_strategy(std::vector<std::string>);
 
-std::pair<double, std::vector<Strategies::Action>> run_linear_regression_strategy(Strategies::LinearRegressionStrategy* strat);
+std::pair<double, std::vector<Strategies::Action>> run_linear_regression_strategy(Strategies::LinearRegressionStrategy* strat, util::CSV_reader* historical_data);
 Strategies::LinearRegressionStrategy* construct_linear_regression_strategy(std::vector<std::string>);
+void train_linear_reg_model(Strategies::LinearRegressionStrategy* strat);
 
