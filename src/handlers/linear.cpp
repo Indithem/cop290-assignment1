@@ -81,16 +81,17 @@ std::pair<double, std::vector<Strategies::Action>> run_linear_regression_strateg
 }
 
 
-Strategies::LinearRegressionStrategy* construct_linear_regression_strategy(int argc, char* argv[]){
-    // args are x p 
+Strategies::LinearRegressionStrategy* construct_linear_regression_strategy(vector<string> argv){
+    // args are x p
+    int argc = argv.size(); 
     if (argc < 3){
         throw "Not enough arguments for Linear Regression strategy";
     }
     int x;
     double p;
     try{
-        x = stoi(get_argument(argc, argv, "x"));
-        p = stod(get_argument(argc, argv, "p"));
+        x = stoi(get_argument(argv, "x"));
+        p = stod(get_argument(argv, "p"));
     } catch (exception& e){
         throw "Arguments for Linear Regression strategy must be integers";
     }
@@ -100,8 +101,12 @@ Strategies::LinearRegressionStrategy* construct_linear_regression_strategy(int a
 void Linear_Regression_Strategy_handler(int argc, char* argv[]){
     
     Strategies::LinearRegressionStrategy* strat;
+    vector<string> args;
+    for (int i=0; i<argc; i++){
+        args.push_back(argv[i]);
+    }
     try{
-        strat = construct_linear_regression_strategy(argc, argv);
+        strat = construct_linear_regression_strategy(args);
     } catch (exception& e){
         cerr<<e.what();
         return;

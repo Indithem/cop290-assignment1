@@ -53,22 +53,24 @@ class processor:
                 to_date=self.end_date,
             )
             df = df[self.REQUIRED_COLUMNS].sort_values(by="DATE")
-            from_date = self.start_date - relativedelta(days=prev_days)
-            to_date = self.start_date
-            prev_days_df = stock_df(
-                symbol=self.SYMBOL,
-                from_date=from_date,
-                to_date=to_date,
-            )
-            while len(prev_days_df) < prev_days:
-                from_date -= relativedelta(days=1)
+            if prev_days:
+                from_date = self.start_date - relativedelta(days=prev_days)
+                to_date = self.start_date
                 prev_days_df = stock_df(
                     symbol=self.SYMBOL,
                     from_date=from_date,
                     to_date=to_date,
                 )
-            prev_days_df = prev_days_df[self.REQUIRED_COLUMNS].sort_values(by="DATE")
-            df = pandas.concat([prev_days_df, df])
+                while len(prev_days_df) < prev_days:
+                    from_date -= relativedelta(days=1)
+                    prev_days_df = stock_df(
+                        symbol=self.SYMBOL,
+                        from_date=from_date,
+                        to_date=to_date,
+                    )
+                prev_days_df = prev_days_df[self.REQUIRED_COLUMNS].sort_values(by="DATE")
+                df = pandas.concat([prev_days_df, df])
+            df["DATE"] = pandas.to_datetime(df["DATE"]).dt.strftime("%d/%m/%Y")
             self.data: pandas.DataFrame = df
             return df
         except Exception as e:

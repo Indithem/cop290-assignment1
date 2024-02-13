@@ -1,1 +1,2 @@
 make strategy=ADX symbol=SBIN x=3 n=14 adx_threshold=25 start_date=01/01/2023 end_date=01/01/2024
+make strategy=LINEAR_REGRESSION symbol=SBIN x=3 p=2 start_date=01/01/2023 end_date=01/01/2024 train_start_date=01/01/2022 train_end_date=31/12/2022

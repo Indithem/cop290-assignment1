@@ -5,9 +5,8 @@
 #include "linear.cpp"
 
 // assumes arguments are given as arg_name=value 
-string get_argument(int argc, char* argv[], string arg_name){
-    for (int i = 0; i < argc; i++){
-        string arg = argv[i];
+string get_argument(vector<string> argv, string arg_name){
+    for (string& arg : argv){
         auto match = mismatch(arg_name.begin(), arg_name.end(), arg.begin());
         if (match.first == arg_name.end()){
             return arg.substr(arg.find("=")+1);
