@@ -7,6 +7,7 @@ There are two Base classes that can be inherited by the strategies.
 * `Strategy` abstract class is the base class for those strategies which depend on a single stock
 * `PairsStrategy` abstract class is the base class for those strategies which depend on a pair of stocks.
 * `Adx_Strategy` class is a specific class made for the strategies that require high and low values of the stock in addition.
+* `LinearRegressionStrategy` class is a specific class made for the training a linear regression model on train data.
 
 
 ### Strategy
@@ -19,6 +20,11 @@ This function is called to get the action to be taken on the current day.
 
 ### PairsStrategy
 Follows the same structure as the `Strategy` class. The only difference is that the `init_first_n_days` function takes in a two vector of doubles and `get` function takes in two doubles as input and outputs a pair . This is because the pairs strategy depends on two stocks.
+
+### LinearRegressionStrategy
+There is dedicated function to train the model.
+The model is trained using normal equation method. Hence the inputs needed are two matrices.
+The `Action get(double)` function works as usual as the other base strategies.
 
 ### Action
 This is an enum to signal whether to buy, sell, or hold the stock for a given day.
