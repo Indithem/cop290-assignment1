@@ -9,9 +9,7 @@ namespace Strategies{
     }
 
     Action RsiStrategy::get(double price) {
-
-        n_days.pop_front();
-        n_days.push_back(price);
+   
  
         double avg_gain = 0.0, avg_loss = 0.0;
 
@@ -32,6 +30,8 @@ namespace Strategies{
         //  RSI
         double rsi = 100.0 -((100.0)/ (1.0 + rs));
 
+     n_days.pop_front();
+        n_days.push_back(price);
         if (rsi < oversold) {
             return BUY;
         } else if (rsi > overbought) {

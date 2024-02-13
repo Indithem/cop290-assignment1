@@ -1,5 +1,6 @@
 #include "lib.h"
 #include <cmath>
+#include <iostream>
 using namespace std;
 
 namespace Strategies {
@@ -9,6 +10,7 @@ namespace Strategies {
 
     Action MacdStrategy::get(double price) {
         
+        cout<<price<<endl;
         Action action = HOLD;
         // Calculate Short EWM
         if(count==0){

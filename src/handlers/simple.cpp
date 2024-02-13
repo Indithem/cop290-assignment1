@@ -162,8 +162,8 @@ Strategies::Strategy* construct_simple_strategy(int argc, char* argv[], string s
         try{
             x= stoi(get_argument(argc, argv, "x"));
             n= stoi(get_argument(argc, argv, "n"));
-            oversold = stod(get_argument(argc, argv, "oversold"));
-            overbought = stod(get_argument(argc, argv, "overbought"));
+            oversold = stod(get_argument(argc, argv, "oversold_threshold"));
+            overbought = stod(get_argument(argc, argv, "overbought_threshold"));
         } catch (exception& e){
             throw invalid_argument("Arguments for RSI strategy must be integers");
         }
