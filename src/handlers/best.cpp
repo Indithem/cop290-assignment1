@@ -1,4 +1,5 @@
 #include "handlers.h"
+#include <omp.h>
 using namespace std;
 
 namespace best_of_all_helpers{
@@ -164,12 +165,28 @@ namespace best_of_all_helpers{
 
 void Best_of_all_Strategy_handler(int argc, char* argv[]){
     
-    auto basic = best_of_all_helpers::run_basic();
-    auto dma = best_of_all_helpers::run_dma();
-    auto dma2 = best_of_all_helpers::run_dma2();
-    auto rsi = best_of_all_helpers::run_rsi();
-    auto adx = best_of_all_helpers::run_adx();
-    auto linear = best_of_all_helpers::run_linear();
+    pair<double, vector<Strategies::Action>> basic, dma, dma2, rsi, adx, linear;
+
+     #pragma omp parallel sections
+    {
+        #pragma omp section
+        basic = best_of_all_helpers::run_basic();
+
+        #pragma omp section
+        dma = best_of_all_helpers::run_dma();
+
+        #pragma omp section
+        dma2 = best_of_all_helpers::run_dma2();
+
+        #pragma omp section
+        rsi = best_of_all_helpers::run_rsi();
+
+        #pragma omp section
+        adx = best_of_all_helpers::run_adx();
+
+        #pragma omp section
+        linear = best_of_all_helpers::run_linear();
+    }
 
     // gets maxiumun of those pairs based on the first value, which is a double
     pair<double, vector<Strategies::Action>> best = basic;

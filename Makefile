@@ -37,7 +37,7 @@ debug: main.exe
 pip_venv: $(environment_name)/pyvenv.cfg
 	
 main.exe: build/util/matrices.o build/util/csv_parser.o build/strategies.o build/handlers.o build/main.o
-	$(GPP) $(CFLAGS) -o $@ $^
+	$(GPP) $(CFLAGS) -lgomp -o $@ $^
 
 build/main.o: src/main.cpp
 	@mkdir -p build
@@ -49,7 +49,7 @@ build/strategies.o: $(wildcard src/strategies/*)
 
 build/handlers.o: $(wildcard src/handlers/*)
 	@mkdir -p build
-	$(GPP) $(CFLAGS) -c -o $@ src/handlers/handlers.cpp
+	$(GPP) $(CFLAGS) -c -fopenmp -o $@ src/handlers/handlers.cpp
 
 build/util/%.o: src/util/%.cpp src/util/%.h
 	@mkdir -p build/util
