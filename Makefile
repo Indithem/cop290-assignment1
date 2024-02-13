@@ -2,7 +2,7 @@ python_executable?=python3
 environment_name=.venv
 py=$(environment_name)/bin/$(python_executable)
 GPP?=g++
-CFLAGS?=-std=c++11 -g 
+CFLAGS?=-std=c++11 -fopenmp -O3
 symbol?=SBIN
 symbol1?=$(symbol)
 strategy?=DMA
@@ -27,7 +27,7 @@ all: $(environment_name)/pyvenv.cfg main.exe
 			adx_threshold=$(adx_threshold) \
 			threshold=$(threshold) \
 			stop_loss_threshold=$(stop_loss_threshold)
-	# @rm -f history.csv history2.csv
+	@rm -f history.csv history2.csv
 
 .PHONY: debug
 debug: main.exe
@@ -49,7 +49,7 @@ build/strategies.o: $(wildcard src/strategies/*)
 
 build/handlers.o: $(wildcard src/handlers/*)
 	@mkdir -p build
-	$(GPP) $(CFLAGS) -c -fopenmp -o $@ src/handlers/handlers.cpp
+	$(GPP) $(CFLAGS) -c -o $@ src/handlers/handlers.cpp
 
 build/util/%.o: src/util/%.cpp src/util/%.h
 	@mkdir -p build/util
