@@ -2,8 +2,8 @@
 using namespace std;
 
 std::pair<double, std::vector<Strategies::Action>> run_linear_regression_strategy(Strategies::LinearRegressionStrategy* strat){
-    util::CSV_reader historical_data("history.csv");
-    auto headers = historical_data.get_next_line(); // headers
+    util::CSV_reader train_data("history2.csv");
+    auto headers = train_data.get_next_line(); // headers
     if (
         headers[0] != "DATE" ||
         headers[1] != "CLOSE" ||
@@ -24,7 +24,7 @@ std::pair<double, std::vector<Strategies::Action>> run_linear_regression_strateg
 
     vector<vector<double>> x_matrix, y_matrix;
     double prev_close, prev_open, prev_high, prev_low, prev_vwap, prev_no_of_trades;
-    auto line = historical_data.get_next_line();
+    auto line = train_data.get_next_line();
     {
         prev_close = stod(line[1]);
         prev_open = stod(line[5]);
@@ -33,7 +33,7 @@ std::pair<double, std::vector<Strategies::Action>> run_linear_regression_strateg
         prev_vwap = stod(line[6]);
         prev_no_of_trades = stod(line[7]);
     }
-    for (line = historical_data.get_next_line(); line.size() > 0; line = historical_data.get_next_line()){
+    for (line = train_data.get_next_line(); line.size() > 0; line = train_data.get_next_line()){
         vector<double> x_row = {
             1,
             prev_close,
@@ -58,6 +58,8 @@ std::pair<double, std::vector<Strategies::Action>> run_linear_regression_strateg
 
     strat->train_data(x_matrix, y_matrix);
 
+    util::CSV_reader historical_data("history.csv");
+    historical_data.get_next_line(); // headers
     vector<Strategies::Action> actions;
     double cash = 0, price;
     int position = 0;

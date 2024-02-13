@@ -22,6 +22,12 @@ namespace Strategies{
     };
 
     Action LinearRegressionStrategy::get(double price, double close, double open, double high, double low, double vwap, double no_of_trades){
+        if (first_day){
+            prev_close = close; prev_open = open; prev_high = high; prev_low = low; prev_vwap = vwap; prev_no_of_trades = no_of_trades;
+            first_day = false;
+            return Action::HOLD;
+        }
+        
         double predicted_price = b0 + b1*prev_close + b2*prev_open + b3*prev_vwap + b4*prev_low + b5*prev_high + b6*prev_no_of_trades + b7*open;
         prev_close = close; prev_open = open; prev_high = high; prev_low = low; prev_vwap = vwap; prev_no_of_trades = no_of_trades;
         if ((predicted_price - price)/price >= p){

@@ -6,7 +6,7 @@ CFLAGS?=-std=c++11 -g
 symbol?=SBIN
 symbol1?=$(symbol)
 strategy?=DMA
-start_date?=02/02/2024
+start_date?=02/02/2023
 end_date?=06/02/2024
 x?=2
 n?=2

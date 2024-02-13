@@ -34,6 +34,7 @@ namespace Strategies{
       double b0,b1,b2,b3,b4,b5,b6,b7;
       double prev_close=0, prev_open=0, prev_high=0, prev_low=0, prev_vwap=0, prev_no_of_trades=0;
       double p;
+      bool first_day=true;
    public:
       int x,n;
       LinearRegressionStrategy( int x, double p): x(x), p(p/100){}
