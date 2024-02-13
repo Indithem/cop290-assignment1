@@ -1,7 +1,7 @@
 #include "handlers.h"
 using namespace std;
 
-std::pair<double, std::vector<Strategies::Action>> run_linear_regression_strategy(Strategies::LinearRegressionStrategy* strat){
+void train_linear_reg_model(Strategies::LinearRegressionStrategy* strat){
     util::CSV_reader train_data("history2.csv");
     auto headers = train_data.get_next_line(); // headers
     if (
@@ -57,14 +57,14 @@ std::pair<double, std::vector<Strategies::Action>> run_linear_regression_strateg
     }
 
     strat->train_data(x_matrix, y_matrix);
+}
 
-    util::CSV_reader historical_data("history.csv");
-    historical_data.get_next_line(); // headers
-    vector<Strategies::Action> actions;
+std::pair<double, std::vector<Strategies::Action>> run_linear_regression_strategy(Strategies::LinearRegressionStrategy* strat, util::CSV_reader* historical_data){
+   vector<Strategies::Action> actions;
     double cash = 0, price;
     int position = 0;
     int x = strat->x;
-    for (line = historical_data.get_next_line(); line.size() > 0; line = historical_data.get_next_line()){
+    for (auto line = historical_data->get_next_line(); line.size() > 0; line = historical_data->get_next_line()){
         price = stod(line[1]);
         double high = stod(line[2]);
         double low = stod(line[3]);
@@ -112,9 +112,13 @@ void Linear_Regression_Strategy_handler(int argc, char* argv[]){
         return;
     } 
 
+    train_linear_reg_model(strat);
     vector<Strategies::Action> actions;
+
+    util::CSV_reader historical_data("history.csv");
+    historical_data.get_next_line(); // headers
     try{
-        actions = run_linear_regression_strategy(strat).second;
+        actions = run_linear_regression_strategy(strat, &historical_data).second;
     } catch (exception& e){
         cerr<<e.what();
         return;
