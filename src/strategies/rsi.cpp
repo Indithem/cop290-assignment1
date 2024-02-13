@@ -1,6 +1,5 @@
 #include"lib.h"
 #include<cmath>
-#include<deque>
 using namespace std;
 namespace Strategies{
     void RsiStrategy::init_first_n_days(std::vector<double> days) {
