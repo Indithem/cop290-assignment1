@@ -9,10 +9,14 @@ void Pairs_Strategy_handler(int argc, char* argv[]){
     }
     int n, x;
     double threshold;
+    vector<string> args;
+    for (int i=0; i<argc; i++){
+        args.push_back(argv[i]);
+    }
     try{
-        n = stoi(get_argument(argc, argv, "n"));
-        x = stoi(get_argument(argc, argv, "x"));
-        threshold = stod(get_argument(argc, argv, "threshold"));
+        n = stoi(get_argument(args, "n"));
+        x = stoi(get_argument(args, "x"));
+        threshold = stod(get_argument(args, "threshold"));
     } catch (exception& e){
         cerr<<"Arguments for Pairs strategy must be integers";
         return;
@@ -62,9 +66,9 @@ void Pairs_Strategy_handler(int argc, char* argv[]){
     double cash = 0, price1, price2;
     int position1 = 0, position2 = 0;
 
-    orders1.write_line(vector<string>{"DATE", "ACTION", "QUANTITY", "PRICE"});
-    orders2.write_line(vector<string>{"DATE", "ACTION", "QUANTITY", "PRICE"});
-    cashflow.write_line(vector<string>{"DATE", "CASH"});
+    orders1.write_line(vector<string>{"Date", "Order_dir", "Quantity", "Price"});
+    orders2.write_line(vector<string>{"Date", "Order_dir", "Quantity", "Price"});
+    cashflow.write_line(vector<string>{"Date", "Cashflow"});
 
     for (vector<string> line1 = historical_data1.get_next_line(), line2 = historical_data2.get_next_line(); line1.size() > 0; line1 = historical_data1.get_next_line(), line2 = historical_data2.get_next_line()){
         price1 = stod(line1[1]);

@@ -49,16 +49,17 @@ std::pair<double, std::vector<Strategies::Action>> run_adx_strategy(Strategies::
     return make_pair(cash, actions);
 }
 
-Strategies::AdxStrategy* construct_adx_strategy(int argc, char* argv[]){
+Strategies::AdxStrategy* construct_adx_strategy(vector<string> argv){
     // args are n,x adx_threshold
+    int argc = argv.size();
     if (argc < 4){
         throw ("Not enough arguments for ADX strategy");
     }
     int n, x;
     double adx_threshold;
     try{
-        n = stoi(get_argument(argc, argv, "n"));
-        x = stoi(get_argument(argc, argv, "x"));
+        n = stoi(get_argument(argv, "n"));
+        x = stoi(get_argument(argv, "x"));
     } catch (exception& e){
         throw("Arguments for ADX strategy must be integers");
     }
@@ -67,8 +68,12 @@ Strategies::AdxStrategy* construct_adx_strategy(int argc, char* argv[]){
 
 void Adx_Strategy_handler(int argc, char* argv[]){
     Strategies::AdxStrategy* strat;
+    vector<string> args;
+    for (int i=0; i<argc; i++){
+        args.push_back(argv[i]);
+    }
     try{
-        strat = construct_adx_strategy(argc, argv);
+        strat = construct_adx_strategy(args);
     } catch (const char* e){
         cerr<<e;
         return;
