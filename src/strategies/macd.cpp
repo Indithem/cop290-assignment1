@@ -10,7 +10,7 @@ namespace Strategies {
 
     Action MacdStrategy::get(double price) {
         
-        cout<<price<<endl;
+        // cout<<price<<endl;
         Action action = HOLD;
         // Calculate Short EWM
         if(count==0){

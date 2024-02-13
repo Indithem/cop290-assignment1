@@ -36,7 +36,7 @@ namespace Strategies{
         variance = (sum_of_squares_diff / n) - (rolling_mean * rolling_mean);
         sd = sqrt(variance);
         z_score = (spread - rolling_mean) / sd;
-        cout<<z_score<<endl;
+        // cout<<z_score<<endl;
         if (z_score > threshold || z_score < -stop_loss_threshold){
             return make_pair(SELL,BUY);
         }
