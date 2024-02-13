@@ -62,5 +62,5 @@ clean:
 	@rm -f nifty_list.csv
 	@rm -rf __pycache__
 	@rm -f $(foreach ff, $(cleanup_formats), *$(ff))
-	@rm -f main.exe daily_cashflow.csv history.csv history2.csv order_statistics.csv a.out final_pnl.txt
+	@rm -f main.exe *.csv a.out final_pnl.txt
 	@rm -rf build

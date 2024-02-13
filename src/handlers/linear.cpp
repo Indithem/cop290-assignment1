@@ -11,7 +11,7 @@ std::pair<double, std::vector<Strategies::Action>> run_linear_regression_strateg
         headers[3] != "LOW" ||
         headers[5] != "OPEN" ||
         headers[6] != "VWAP" ||
-        headers[7] != "NO_OF_TRADES"
+        headers[7] != "NO OF TRADES"
     ){
         cerr << "Expected headers: DATE CLOSE HIGH LOW * OPEN VWAP NO_OF_TRADES\n"
         << "Got headers: ";

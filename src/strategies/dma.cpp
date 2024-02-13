@@ -33,7 +33,6 @@ namespace Strategies{
         double mean_of_squares = sum_of_squares / n;
         double variance = mean_of_squares - (sum / n) * (sum / n);
         double sd = sqrt(variance);
-        cout<<avg_price<<" "<<sd<<endl;
 
       
 

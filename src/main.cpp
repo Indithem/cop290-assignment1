@@ -31,6 +31,9 @@ int main(int argc, char* argv[]){
     if (argc < 2){
         throw invalid_argument("No strategy provided");
     }
+    for (int i=0; i<argc; i++){
+        // cout << argv[i] << endl;
+    }
     string strategy_str = argv[1];
     Strategy_Types strategy_type;
     try
